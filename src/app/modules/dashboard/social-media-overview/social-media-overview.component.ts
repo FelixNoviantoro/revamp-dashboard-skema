@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { from, mergeMap, skip, Subscription } from 'rxjs';
+import { from, mergeMap, skip, Subscription, tap } from 'rxjs';
 import { HighchartsComponent } from '../../../core/components/highcharts/highcharts.component';
 import { ChartType } from '../../../core/models/social-media';
 import { SocialMediaService } from '../../../core/services/social-media.service';
@@ -41,23 +41,23 @@ export class SocialMediaOverviewComponent implements OnInit, OnDestroy {
   }[] = [
     {
       type: 'number-of-mentions',
-      title: 'Number of Mentions',
+      title: 'Daily Mentions',
       isLoading: true,
     },
     {
       type: 'share-of-sentiment',
-      title: 'Share of Sentiment',
+      title: 'Sentiments',
       isLoading: true,
     },
     {
       type: 'share-of-platform',
-      title: 'Share of Platform',
+      title: 'Platforms',
       height: '520px',
       isLoading: true,
     },
     {
       type: 'engaging-authors',
-      title: 'Engaging Authors',
+      title: 'Top Influencer',
       height: '520px',
       isLoading: true,
     },
@@ -81,25 +81,27 @@ export class SocialMediaOverviewComponent implements OnInit, OnDestroy {
   }
 
   getData(startDate: string, endDate: string) {
-    this.listCharts.forEach((v) => {
-      v.data = undefined;
-      v.isLoading = true;
-    });
-
     from(this.listCharts)
       .pipe(
-        mergeMap((chart) =>
+        tap((v) => {
+          v.isLoading = true;
+          v.data = undefined;
+        }),
+        mergeMap((v, i) =>
           this.service
-            .getChart({ type: chart.type, startDate, endDate })
+            .getChart({ type: v.type, startDate, endDate })
             .pipe(
-              mergeMap((res: any) => [{ type: chart.type, data: res?.data }])
+              mergeMap((res: any) => [
+                { type: v.type, data: res?.data, index: i },
+              ])
             )
         )
       )
       .subscribe((res) => {
-        const i = this.listCharts.findIndex((v) => v.type === res.type);
-        if (i > -1 && res.data) {
+        const i = res.index;
+        if (res.data) {
           this.listCharts[i].description = res.data.caption.text;
+          res.data.title.text = this.listCharts[i].title;
           delete res.data['caption'];
 
           if (isDarkMode()) {
