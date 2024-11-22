@@ -39,4 +39,13 @@ export class OverviewService {
       total_word: 40,
     });
   }
+
+  downloadWordCloudExcel(filter: FilterRequestPayload): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/v2/dashboard/wordcloud/download`, {
+      ...filter,
+      media_id: 0,
+      total_word: 40,
+      download_type: "excel"
+    });
+  }
 }

@@ -14,11 +14,15 @@ import { SpinnerComponent } from '../../../../core/components/spinner/spinner.co
 import { RouterLink } from '@angular/router';
 import { OverviewService } from '../../../../core/services/overview.service';
 import { FilterService } from '../../../../core/services/filter.service';
+import { TieredMenuModule } from 'primeng/tieredmenu';
+import { MenuItem } from 'primeng/api';
+import { ButtonSecondaryComponent } from '../../../../core/components/button-secondary/button-secondary.component';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-top-city',
   standalone: true,
-  imports: [TableModule, AngularD3CloudModule, IconCarComponent, IconInfoComponent, CommonModule, SpinnerComponent, RouterLink],
+  imports: [TableModule, AngularD3CloudModule, IconCarComponent, IconInfoComponent, CommonModule, SpinnerComponent, RouterLink, TieredMenuModule, ButtonSecondaryComponent, ButtonModule],
   templateUrl: './top-city.component.html',
   styleUrl: './top-city.component.scss',
 })
@@ -34,6 +38,7 @@ export class TopCityComponent {
   largestWordValue: number = 0;
   isAllCountLoading: boolean = false;
   isWordCloudLoading: boolean = false;
+  downloadItems: MenuItem[] | undefined;
 
   constructor(
     private store: Store<AppState>,
@@ -41,6 +46,14 @@ export class TopCityComponent {
     private filterService: FilterService
   ) {
     this.overviewState = this.store.select(selectOverviewState);
+
+    // Initialize dropdown item
+    this.downloadItems = [
+      {
+        label: 'Excel',
+        command: () => this.downloadExcel(),
+      }
+    ];
   }
 
   ngOnInit() {
@@ -110,4 +123,19 @@ export class TopCityComponent {
 
     return Math.min(Math.max(scaledOutput, minOutput), maxOutput);
   };
+
+  downloadExcel = () => {
+    const {category_set, category_id, date_type, end_date, start_date, user_media_type_id } = this.filterService.filter;
+    this.overviewService.downloadWordCloudExcel({
+      category_set,
+      category_id,
+      date_type,
+      end_date,
+      start_date,
+      user_media_type_id,
+    })
+    .subscribe(({ data }) => {
+      window.open(data.file_url, '_blank')?.focus()
+    })
+  }
 }

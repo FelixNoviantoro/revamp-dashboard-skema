@@ -29,6 +29,11 @@
     </div>
   </spinner>
   <spinner [spinning]="isWordCloudLoading">
+    <!-- <p-button icon="pi pi-ellipsis-h" (onClick)="menu.toggle($event)"></p-button> -->
+     <div class="flex justify-content-end mb-2">
+      <button-secondary label="Download" icon="pi pi-chevron-down" (click)="menu.toggle($event)"></button-secondary>
+      <p-tieredMenu #menu [model]="downloadItems" [popup]="true" appendTo="body" styleClass="text-sm"></p-tieredMenu>
+     </div>
     <div style="background-color: var(--card-color)" class="border-1 border-200">
       <angular-d3-cloud
         [data]="wordCloud"
