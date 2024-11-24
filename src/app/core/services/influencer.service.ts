@@ -24,6 +24,7 @@ export class InfluencerService {
       category_set: filter.category_set ?? '',
       user_media_type_id: filter.user_media_type_id ?? '',
       category_id: filter.category_id ?? 'all',
+      search: filter.term ?? ''
     };
 
     return this.http.get<InfluencerCountResponse>(`${this.baseUrl}/v1/spokesperson/quotes/count`, {

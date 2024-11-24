@@ -23,6 +23,7 @@ export class MediaSOVService {
       media_id: filter.media_id ?? '',
       category_set: filter.category_set ?? '',
       user_media_type_id: filter.user_media_type_id ?? '',
+      search: filter.term ?? ''
     };
 
     return this.http.get<{

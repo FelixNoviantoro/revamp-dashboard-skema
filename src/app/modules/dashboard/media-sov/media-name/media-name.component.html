@@ -4,6 +4,10 @@
     <div class="text-sm font-semibold">Media Name</div>
     <icon-info></icon-info>
   </div>
+  <span class="p-input-icon-right mb-2">
+    <input type="text" pInputText placeholder="Search" class="p-inputtext-sm max-w-17rem" [formControl]="searchForm.controls['query']"/>
+    <i class="pi pi-search"></i>
+  </span>
   <spinner [spinning]="isLoading">
     <div style="height: 700px" class="overflow-auto" (scroll)="onLazyLoad($event)">
       <div
