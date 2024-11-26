@@ -145,6 +145,16 @@ export class ArticleService {
     });
   }
 
+  downloadExcel(filter: FilterRequestPayload): Observable<any>{
+    return this.http.post<any>(`${this.baseUrl}/v1/search/download/`, {
+      category_id: 'all',
+      page: filter.page ?? 0,
+      maxSize: filter.maxSize ?? 8,
+      size: filter.size ?? 0,
+      ...filter,
+    });
+  }
+
   sendMail(emails: string, articles: Article[]) {
     return this.http.post(`${this.baseUrl}/v1/user/editing/send-mail`, {
       email: emails.trim().replace(' ', ''),

@@ -18,6 +18,10 @@ export class MapService {
     return this.http.get<any>('assets/map.json');
   }
 
+  getGeoJsonDataProv(): Observable<any> {
+    return this.http.get<any>('assets/indonesia-province.json');
+  }
+
   getAllCount(filter: FilterRequestPayload): Observable<AllCount> {
     return this.http.post<AllCount>(`${this.baseUrl}/v2/all-count/`, {
       ...filter,

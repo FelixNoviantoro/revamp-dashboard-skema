@@ -15,6 +15,9 @@ import { Article } from '../../../core/models/article.model';
 import { FilterRequestPayload } from '../../../core/models/request.model';
 import { ArticleService } from '../../../core/services/article.service';
 import { PreferenceService } from '../../../core/services/preference.service';
+import { ButtonSecondaryComponent } from '../../../core/components/button-secondary/button-secondary.component';
+import { MessageService } from 'primeng/api';
+import { MessagesModule } from 'primeng/messages';
 
 interface Option {
   name: string;
@@ -37,7 +40,10 @@ const SEARCH_LOCAL_KEY = 'search_terms';
     SpinnerComponent,
     ArticleListComponent,
     IconArticleNotFoundComponent,
+    ButtonSecondaryComponent,
+    MessagesModule
   ],
+  providers: [MessageService],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
 })
@@ -69,7 +75,8 @@ export class SearchComponent {
 
   constructor(
     private preferenceService: PreferenceService,
-    private articleService: ArticleService
+    private articleService: ArticleService,
+    private messageService: MessageService
   ) {
     this.getMediaOptions();
     const existingSearch = localStorage.getItem(SEARCH_LOCAL_KEY);
@@ -142,6 +149,36 @@ export class SearchComponent {
     };
     window.localStorage.setItem(SEARCH_LOCAL_KEY, JSON.stringify(payload));
     this.fetchArticles(payload);
+  }
+
+  onDownload = () => {
+    this.page = 0;
+    const payload = {
+      start_date: moment(this.startDate).format('YYYY-MM-DD'),
+      end_date: moment(this.endDate).format('YYYY-MM-DD'),
+      search_field: this.selectedContent,
+      media_category: this.selectedMedia,
+      page: this.page,
+      term: this.searchTerm,
+    };
+
+    this.downloadExcel(payload);
+  }
+
+  downloadExcel = (req: FilterRequestPayload) => {
+    this.articleService
+      .downloadExcel(req)
+      .subscribe(({ data }) => {
+        window.open(data, '_blank')?.focus()
+      },
+      (e) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Failed',
+          detail: e.error.data.message
+        });
+        console.log(e.error.data.message)
+      })
   }
 
   onPageChange = (e?: PaginatorState) => {

@@ -63,6 +63,7 @@
       </div>
     </div>
     <p-button label="Search" styleClass="mb-1 text-mg" (onClick)="onSearch()" [disabled]="!searchTerm"></p-button>
+    <p-button *ngIf="hasSearched && totalRecords !== 0" label="Download" severity="secondary" (onClick)="onDownload()"></p-button>
   </div>
   <div class="mt-5">
     <spinner [spinning]="isLoading">
