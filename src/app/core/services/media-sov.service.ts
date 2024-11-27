@@ -23,7 +23,8 @@ export class MediaSOVService {
       media_id: filter.media_id ?? '',
       category_set: filter.category_set ?? '',
       user_media_type_id: filter.user_media_type_id ?? '',
-      search: filter.term ?? ''
+      search: filter.term ?? '',
+      category_id: filter.category_id ?? ''
     };
 
     return this.http.get<{
@@ -47,6 +48,7 @@ export class MediaSOVService {
       category_set: filter.category_set ?? '',
       user_media_type_id: filter.user_media_type_id ?? '',
       tone: filter.tone ?? '',
+      category_id: filter.category_id ?? '',
     };
 
     return this.http.get<{ data: Article[] }>(`${this.baseUrl}/v3/media-sov/latest-articles`, { params });
