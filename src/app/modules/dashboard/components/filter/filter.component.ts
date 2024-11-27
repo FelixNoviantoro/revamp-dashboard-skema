@@ -137,6 +137,9 @@ export class FilterComponent {
   };
 
   onSetFilter() {
+    console.log("=========================================")
+    console.log(`start time : ${moment(this.startTime).format("HH:mm:ss")} end time : ${this.endTime.getTime().toFixed()}`)
+
     const today = moment().format('YYYY-MM-DD');
     const dateRange: any = {
       yesterday: [moment().subtract(1, 'days').format('YYYY-MM-DD'), today],
@@ -157,6 +160,8 @@ export class FilterComponent {
       user_media_type_id: this.selectedMedia,
       start_date: startDate,
       end_date: endDate,
+      start_time: this.isCustom ? moment(this.startTime).format("HH:mm:ss") : '00:00:00',
+      end_time: this.isCustom ? moment(this.endTime).format("HH:mm:ss") : '23:59:59'
     };
     this.store.dispatch(setFilter({ filter }));
   }

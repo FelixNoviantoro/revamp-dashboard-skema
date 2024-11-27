@@ -20,4 +20,6 @@ export interface FilterRequestPayload {
   search_field?: string;
   media_category?: string;
   sentiments?: string;
+  start_time?: string;
+  end_time?: string;
 }

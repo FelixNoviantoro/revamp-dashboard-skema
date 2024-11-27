@@ -72,11 +72,12 @@
           <span class="select-container">
             <p-calendar
               [(ngModel)]="startTime"
-              inputId="startDate"
+              inputId="startTime"
               class="datepicker"
               styleClass="border-200"
               [inputStyle]="{ backgroundColor: 'var(--bg-color)' }"
               styleClass="w-full"
+              hourFormat="24"
               [showButtonBar]="true"
               [timeOnly]="true"></p-calendar>
             <label for="startDate">Time</label>
@@ -100,8 +101,9 @@
           <span class="select-container">
             <p-calendar
               [(ngModel)]="endTime"
-              inputId="endDate"
+              inputId="endTime"
               class="datepicker"
+              hourFormat="24"
               styleClass="w-full border-200"
               [inputStyle]="{ backgroundColor: 'var(--bg-color)' }"
               [showButtonBar]="true"

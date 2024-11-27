@@ -16,8 +16,8 @@ export class InfluencerService {
 
   getSpokepersons(filter: FilterRequestPayload): Observable<InfluencerCountResponse> {
     const params = {
-      start_date: filter.start_date ? filter.start_date + ' 00:00:00' : '',
-      end_date: filter.end_date ? filter.end_date + ' 23:59:59' : '',
+      start_date: filter.start_date ? `${filter.start_date} ${filter.start_time}` : '',
+      end_date: filter.end_date ? `${filter.end_date} ${filter.end_time}` : '',
       max_size: filter.max_size ?? 20,
       page: filter.page ?? 1,
       media_id: filter.media_id ?? 0,

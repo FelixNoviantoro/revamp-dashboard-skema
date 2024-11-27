@@ -16,8 +16,8 @@ export class MediaSOVService {
 
   getMedias(filter: FilterRequestPayload) {
     const params = {
-      start_date: filter.start_date ? filter.start_date + ' 00:00:00' : '',
-      end_date: filter.end_date ? filter.end_date + ' 23:59:59' : '',
+      start_date: filter.start_date ? `${filter.start_date} ${filter.start_time}` : '',
+      end_date: filter.end_date ? `${filter.end_date} ${filter.end_time}` : '',
       max_size: filter.max_size ?? 20,
       page: filter.page ?? 1,
       media_id: filter.media_id ?? '',
@@ -40,8 +40,8 @@ export class MediaSOVService {
 
   getLatestArticles(filter: FilterRequestPayload): Observable<{ data: Article[] }> {
     const params = {
-      start_date: filter.start_date ? filter.start_date + ' 00:00:00' : '',
-      end_date: filter.end_date ? filter.end_date + ' 23:59:59' : '',
+      start_date: filter.start_date ? `${filter.start_date} ${filter.start_time}` : '',
+      end_date: filter.end_date ? `${filter.end_date} ${filter.end_time}` : '',
       max_size: filter.max_size ?? 6,
       page: 1,
       media_id: filter.media_id ?? '',
@@ -56,8 +56,8 @@ export class MediaSOVService {
 
   getMediaTones(filter: FilterRequestPayload): Observable<{ data: MediaTone }> {
     const params = {
-      start_date: filter.start_date ? filter.start_date + ' 00:00:00' : '',
-      end_date: filter.end_date ? filter.end_date + ' 23:59:59' : '',
+      start_date: filter.start_date ? `${filter.start_date} ${filter.start_time}` : '',
+      end_date: filter.end_date ? `${filter.end_date} ${filter.end_time}` : '',
       media_id: filter.media_id ?? '',
       category_set: filter.category_set ?? '',
       user_media_type_id: filter.user_media_type_id ?? '',
