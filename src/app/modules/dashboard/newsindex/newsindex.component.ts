@@ -127,6 +127,10 @@ export class NewsindexComponent {
       command: () => this.downloadAsDocs(),
     },
     {
+      label: 'Download EXCEL',
+      command: () => this.downloadAsExcel(),
+    },
+    {
       label: 'Send to E-mail',
       command: () => (this.showSendMailDialog = true),
     },
@@ -392,6 +396,21 @@ export class NewsindexComponent {
         this.isLoading = false;
       });
   };
+
+  downloadAsExcel = () => {
+    this.isLoading = true;
+    this.articleService
+      .downloadSelectedExcel(
+        {...this.filterService.filter},
+        this.selectedArticles
+      )
+      .subscribe(({ data }) => {
+        window.open(data.file_url, '_blank')?.focus()
+      })
+      .add(() => {
+        this.isLoading = false;
+      });
+  }
 
   sendMail() {
     this.isLoading = true;

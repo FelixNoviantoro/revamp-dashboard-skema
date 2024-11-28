@@ -145,6 +145,19 @@ export class ArticleService {
     });
   }
 
+  downloadSelectedExcel(filter: FilterRequestPayload, articles: Article[]): Observable<any>{
+    const article_ids = articles.map(({ article_id }) => article_id);
+    console.log("==============================")
+    console.log(article_ids)
+    const params = {
+      start_date: filter.start_date ? `${filter.start_date} ${filter.start_time}` : '',
+      end_date: filter.end_date ? `${filter.end_date} ${filter.end_time}` : '',
+      download_type : "excel",
+      article_ids : article_ids
+    };
+    return this.http.get<any>(`${this.baseUrl}/v3/user/editing/download`, { params });
+  }
+
   downloadExcel(filter: FilterRequestPayload): Observable<any>{
     return this.http.post<any>(`${this.baseUrl}/v1/search/download/`, {
       category_id: 'all',
