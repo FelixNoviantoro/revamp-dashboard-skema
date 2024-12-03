@@ -139,7 +139,7 @@ export class NewsindexComponent {
       disabled: !this?.user?.stat_edit,
       items: [
         {
-          label: 'Posivite',
+          label: 'Positive',
           command: () => this.updateTone(POSITIVE_TONE),
         },
         {

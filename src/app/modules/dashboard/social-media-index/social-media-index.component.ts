@@ -125,6 +125,15 @@ export class SocialMediaIndexComponent implements OnInit, OnDestroy {
               res.data.yAxis.labels.style.color = 'white';
             }
           }
+
+          res.data.plotOptions.series = {
+            ...res.data.plotOptions.series,
+            point: {
+              events: {
+                // click: ({ point }: any) => this.getChartDetails(res.type, point, 0),
+              },
+            },
+          };
           this.listCharts[i].data = res.data;
         }
         this.listCharts[i].isLoading = false;
