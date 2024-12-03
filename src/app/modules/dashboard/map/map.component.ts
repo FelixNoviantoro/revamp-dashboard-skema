@@ -4,12 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { Store } from '@ngrx/store';
-import { DomUtil, MapOptions, control, geoJSON, latLng, tileLayer } from 'leaflet';
+import L, { DomUtil, MapOptions, control, geoJSON, latLng, tileLayer } from 'leaflet';
 import { DividerModule } from 'primeng/divider';
 import { DropdownModule } from 'primeng/dropdown';
 import { IconNewspaperComponent } from '../../../core/components/icons/newspaper/newspaper.component';
 import { SpinnerComponent } from '../../../core/components/spinner/spinner.component';
-import { AllCount, Location } from '../../../core/models/all-count.model';
+import { AllCount, Location, ProvinceCount } from '../../../core/models/all-count.model';
 import { Article } from '../../../core/models/article.model';
 import { FilterRequestPayload } from '../../../core/models/request.model';
 import { FilterService } from '../../../core/services/filter.service';
@@ -47,6 +47,12 @@ export class MapComponent {
   articles: Article[] = [];
   isLoadingArticles: boolean = false;
 
+  provinceLayers: Map<string, L.Layer> = new Map();
+  citiesLayers: Map<string, L.Layer> = new Map();
+  citiesLayersByProvince: Map<string, L.LayerGroup> = new Map();
+  selectedGroupCities: L.LayerGroup | null = null;
+  selectedLayerProv: L.Layer | null = null;
+
   selectedFilter: string = 'article';
   filterOptions = [
     { name: 'Article', value: 'article' },
@@ -73,9 +79,14 @@ export class MapComponent {
     private router: Router,
     private filterService: FilterService
   ) {}
-
+  
   ngOnInit(): void {
+    this.isLoadingArticles = true;
     this.filter = this.filterService.subscribe(this.onFilterChange);
+  }
+
+  ngAfterViewInit(): void {
+    this.fetchCitiesCount();
   }
 
   navigateInsideZone(article_id: string) {
@@ -84,13 +95,17 @@ export class MapComponent {
     });
   }
 
-  fetchAllCount = (filter: FilterRequestPayload | FilterState = initialState) => {
-    this.mapService.getAllCount(filter as FilterRequestPayload).subscribe((res) => {
-      this.mapLocationData = res.data;
-      this.addGeoJSONLayer(filter, res);
-      this.selectedLoc = null;
+  fetchProvinceCount = (filter: FilterRequestPayload | FilterState = initialState) => {
+    this.mapService.getAllCountProv(filter as FilterRequestPayload, '').subscribe((res) => {
+      this.addProvGeoJSONLayer(filter, res);
     });
-  };
+  }
+
+  fetchCitiesCount = (filter: FilterRequestPayload | FilterState = initialState) => {
+    this.mapService.getAllCount(filter as FilterRequestPayload).subscribe((res) => {
+      this.addCitiesGeoJSONLayer(filter, res);
+    });
+  }
 
   fetchArticlesByGeo = (filter: FilterRequestPayload | FilterState | null, location = this.selectedLoc) => {
     this.isLoadingArticles = true;
@@ -129,27 +144,40 @@ export class MapComponent {
     legendControl.addTo(this.map);
   };
 
-  addGeoJSONLayer(filter: any, data: AllCount): void {
+  addProvGeoJSONLayer(filter: any, data: ProvinceCount): void {
     const getDataByLocation = (featureName: string) => {
-      return data.data.find((location) => location.key.toUpperCase() === featureName);
+      return data.data.find((prov) => prov.key.toUpperCase() === featureName?.toUpperCase());
     };
 
-    this.mapService.getGeoJsonData().subscribe((data) => {
+    this.mapService.getGeoJsonDataProv().subscribe((data) => {
       if (!this.map) return;
       this.geoJsonLayer = geoJSON(data, {
         onEachFeature: (feature, layer) => {
-          const featureName = feature.properties.name;
+          console.log(`feature name : ${JSON.stringify(feature.properties)}`)
+          const featureName = feature.properties.Propinsi.toUpperCase();
           const tooltipContent = `${featureName}: ${getDataByLocation(featureName)?.value ?? 0}`;
 
           layer.bindTooltip(tooltipContent, {
-            className: 'bg-color',
             // permanent: true,
+            direction: "center",
+            className: "tooltip",
           });
+
+          this.provinceLayers.set(featureName, layer);
 
           layer.on({
             click: (e) => {
-              const clickedFeatureName = e.target.feature.properties.name;
-              this.fetchArticlesByGeo(filter, clickedFeatureName);
+              const clickedFeatureName = e.target.feature.properties.Propinsi.toUpperCase();
+              this.removeProvinceLayer(clickedFeatureName); 
+
+              const hoveredLayer = e.target;
+              const featureData = getDataByLocation(clickedFeatureName);
+              this.map?.fitBounds(e.target.getBounds());
+              hoveredLayer.setStyle({
+                fillColor: this.getMapColor(featureData?.value ?? 0),
+                fillOpacity: 1,
+              });
+              this.addCitiesLayer(clickedFeatureName);
             },
             mouseover: (e) => {
               const hoveredLayer = e.target;
@@ -167,7 +195,7 @@ export class MapComponent {
           });
         },
         style: (feature) => {
-          const featureName = feature?.properties.name;
+          const featureName = feature?.properties.Propinsi.toUpperCase();
           const featureData = getDataByLocation(featureName);
 
           return {
@@ -178,8 +206,94 @@ export class MapComponent {
           };
         },
       }).addTo(this.map);
+
+      this.map.createPane('label')
     });
   }
+
+  addCitiesGeoJSONLayer(filter: any, data: AllCount): void {
+    const getDataByLocation = (featureName: string) => {
+      return data.data.find((location) => 
+        location.key.toUpperCase() === featureName?.toUpperCase()
+      );
+    };
+  
+    const provinceGroups = new Map<string, L.LayerGroup>();
+  
+    this.mapService.getGeoJsonDataCities().subscribe({
+      next: (geoJsonData) => {
+        if (!this.map) return;
+  
+        this.geoJsonLayer = geoJSON(geoJsonData, {
+          onEachFeature: (feature, layer) => {
+            const provinceName = feature.properties.NAME_1.toUpperCase();
+            const cityName = feature.properties.NAME_2;
+            const type = feature.properties.TYPE_2;
+  
+            if (!provinceGroups.has(provinceName)) {
+              provinceGroups.set(provinceName, L.layerGroup());
+            }
+  
+            const provinceGroup = provinceGroups.get(provinceName);
+            provinceGroup?.addLayer(layer);
+  
+            const tooltipContent = `${cityName}: ${getDataByLocation(`${type} ${cityName}`)?.value ?? 0}`;
+            layer.bindTooltip(tooltipContent, {
+              permanent: true,
+              direction: "center",
+              className: "tooltip",
+            });
+  
+            this.citiesLayers.set(cityName, layer);
+  
+            layer.on({
+              click: (e) => {
+                const clickedFeatureName = e.target.feature.properties.NAME_2;
+                this.map?.fitBounds(e.target.getBounds());
+                this.removeProvinceLayer(clickedFeatureName);
+                this.fetchArticlesByGeo(filter, clickedFeatureName);
+              },
+              mouseover: (e) => {
+                const hoveredLayer = e.target;
+                hoveredLayer.setStyle({ fillColor: isDarkMode() ? '#f1f4fa' : '#111827', fillOpacity: 1 });
+              },
+              mouseout: (e) => {
+                const hoveredLayer = e.target;
+                const featureData = getDataByLocation(`${type} ${cityName}`);
+  
+                hoveredLayer.setStyle({
+                  fillColor: this.getMapColor(featureData?.value ?? 0),
+                  fillOpacity: 1,
+                });
+              },
+            });
+          },
+          style: (feature) => {
+            const cityName = feature?.properties.NAME_2;
+            const type = feature?.properties.TYPE_2;
+            const featureData = getDataByLocation(`${type} ${cityName}`);
+  
+            return {
+              fillColor: this.getMapColor(featureData?.value ?? 0),
+              fillOpacity: 1,
+              color: isDarkMode() ? '#19182b' : '#f1f4fa',
+              weight: 1,
+            };
+          },
+        });
+  
+        this.citiesLayersByProvince = provinceGroups;
+      },
+      error: (error) => {
+        console.error("Error loading GeoJSON data:", error);
+        this.isLoadingArticles = false; // Handle error case
+      },
+      complete: () => {
+        this.isLoadingArticles = false;
+      },
+    });
+  }
+  
 
   getLevel(num: number, min: number, max: number) {
     if (num === 0) return 5;
@@ -221,13 +335,44 @@ export class MapComponent {
     if (this.geoJsonLayer) {
       this.geoJsonLayer.removeFrom(this.map!);
     }
-    this.fetchAllCount({ ...this.filterService.filter, type_location });
+    this.fetchProvinceCount({ ...this.filterService.filter, type_location });
   };
 
   onFilterChange = (filterState: FilterState) => {
     if (this.geoJsonLayer) {
       this.geoJsonLayer.removeFrom(this.map!);
     }
-    this.fetchAllCount(filterState);
+    this.fetchProvinceCount(filterState);
   };
+
+  removeProvinceLayer = (province: string): void  => {
+    const layer = this.provinceLayers.get(province);
+    if (layer) {
+      this.map?.removeLayer(layer);
+    }
+  }
+
+  addCitiesLayer = (province: string) => {
+
+    console.log(`provinsi === ${province}`);
+
+    if(this.selectedLayerProv){
+        this.selectedGroupCities?.removeFrom(this.map!);
+        this.selectedLayerProv.addTo(this.map!);
+    }
+
+    const provinceLayer = this.provinceLayers.get(province); // Assuming `provinceLayers` stores province layers
+    if (provinceLayer) {
+      this.map?.removeLayer(provinceLayer);
+    }
+  
+    const cityLayerGroup = this.citiesLayersByProvince.get(province)
+    if (cityLayerGroup) {
+      cityLayerGroup.addTo(this.map!);
+    }
+
+    this.selectedGroupCities = cityLayerGroup!;
+    this.selectedLayerProv = provinceLayer!;
+
+  }
 }

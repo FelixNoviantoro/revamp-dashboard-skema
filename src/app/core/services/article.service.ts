@@ -147,8 +147,6 @@ export class ArticleService {
 
   downloadSelectedExcel(filter: FilterRequestPayload, articles: Article[]): Observable<any>{
     const article_ids = articles.map(({ article_id }) => article_id);
-    console.log("==============================")
-    console.log(article_ids)
     const params = {
       start_date: filter.start_date ? `${filter.start_date} ${filter.start_time}` : '',
       end_date: filter.end_date ? `${filter.end_date} ${filter.end_time}` : '',

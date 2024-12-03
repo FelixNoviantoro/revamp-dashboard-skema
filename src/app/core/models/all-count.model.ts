@@ -14,3 +14,20 @@ export interface AllCount {
   top_location: TopLocation;
   data: Location[];
 }
+
+export interface ArticleCategory {
+  category_id: string;
+  count: number;
+}
+
+export interface ProvinceData {
+  key: string;
+  value: number;
+  categories: ArticleCategory[];
+}
+
+export interface ProvinceCount {
+  code: number;
+  message: string;
+  data: ProvinceData[];
+}
