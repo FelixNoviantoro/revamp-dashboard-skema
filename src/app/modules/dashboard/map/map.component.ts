@@ -157,10 +157,9 @@ export class MapComponent {
           const featureName = feature.properties.Propinsi.toUpperCase();
           const tooltipContent = `${featureName}: ${getDataByLocation(featureName)?.value ?? 0}`;
 
-          layer.bindTooltip(tooltipContent, {
-            // permanent: true,
+          layer.bindTooltip("<div style='font-size: 8px;'><b>" + featureName + "</b></div>", {
+            permanent: true,
             direction: "center",
-            className: "tooltip",
           });
 
           this.provinceLayers.set(featureName, layer);
@@ -238,7 +237,7 @@ export class MapComponent {
             provinceGroup?.addLayer(layer);
   
             const tooltipContent = `${cityName}: ${getDataByLocation(`${type} ${cityName}`)?.value ?? 0}`;
-            layer.bindTooltip(tooltipContent, {
+            layer.bindTooltip("<div style='font-size: 8px;'><b>" + tooltipContent + "</b></div>", {
               permanent: true,
               direction: "center",
               className: "tooltip",

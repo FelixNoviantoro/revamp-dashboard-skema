@@ -1,9 +1,9 @@
-.tooltip {
-    font-size: 4px; /* Adjust the size as needed */
+.custom-city-label {
+    font-size: 14px; /* Adjust font size */
     font-weight: bold;
-    color: #ff0000; /* Text color */
-    background: none; /* Remove background */
-    border: none; /* Remove border */
-    text-shadow: 1px 1px 2px white; /* Optional text shadow */
-    padding: 4px; /* Optional padding */
+    color: #333; /* Text color */
+    background: rgba(255, 255, 255, 0.8); /* Background with some opacity */
+    border-radius: 4px; /* Rounded corners */
+    padding: 2px 4px; /* Padding inside the label */
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3); /* Optional shadow */
   }
