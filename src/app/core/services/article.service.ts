@@ -201,6 +201,7 @@ export class ArticleService {
       page: 1,
       media_id: filter.media_id ?? '',
       category_set: filter.category_set ?? '',
+      category_id: filter.category_id ?? '',
       user_media_type_id: filter.user_media_type_id ?? '',
       tone: filter.tone ?? '',
     };
