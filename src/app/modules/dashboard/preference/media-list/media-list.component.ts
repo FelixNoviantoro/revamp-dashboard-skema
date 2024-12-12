@@ -19,7 +19,6 @@ import { forkJoin } from 'rxjs';
 import { IconAlertComponent } from '../../../../core/components/icons/alert/alert.component';
 import { IconPencilComponent } from '../../../../core/components/icons/pencil/pencil.component';
 import { Media } from '../../../../core/models/media.model';
-import { FormatAmountPipe } from '../../../../core/pipes/format-amount.pipe';
 import { PreferenceService } from '../../../../core/services/preference.service';
 import { TONE_MAP } from '../../../../shared/utils/Constants';
 
@@ -37,7 +36,6 @@ import { TONE_MAP } from '../../../../shared/utils/Constants';
     ConfirmPopupModule,
     DialogModule,
     ReactiveFormsModule,
-    FormatAmountPipe,
     InputTextareaModule,
     MultiSelectModule,
     TabMenuModule,
@@ -65,15 +63,16 @@ export class MediaListComponent {
   selectedMedia!: Media;
 
   listMediaGroup: TreeNode[] = [];
-  listSelectedMediaGroup: TreeNode[] = [];
+  listSelected: TreeNode[] = [];
 
   form!: FormGroup;
+  isTier: boolean = false;
 
   constructor(
     private preferenceService: PreferenceService,
     private messageService: MessageService,
     private fb: FormBuilder
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.resetForm();
@@ -83,7 +82,7 @@ export class MediaListComponent {
   fetchData = () => {
     this.isLoading = true;
     this.showAddModal = this.showUpdateModal = this.showDeleteModal = false;
-    this.listMediaGroup.length = this.listSelectedMediaGroup.length = 0;
+    this.listMediaGroup.length = this.listSelected.length = 0;
 
     this.preferenceService.getMedias().subscribe((res) => {
       this.isLoading = false;
@@ -136,7 +135,7 @@ export class MediaListComponent {
     if (this.isLoading) return;
 
     this.isLoading = true;
-    const selectedIds = this.listSelectedMediaGroup.map((v) => (!v.children?.length ? v.data : null)).filter((v) => !!v);
+    const selectedIds = this.listSelected.map((v) => (!v.children?.length ? v.data : null)).filter((v) => !!v);
     const media_list = [];
     for (const v of this.listMediaGroup[0].children!) {
       if (v.children) {
@@ -183,7 +182,7 @@ export class MediaListComponent {
   preSelectNode(node: TreeNode) {
     const { isAllChildSelected, isSomeChildSelected } = this.getNodeState(node);
     if (isAllChildSelected) {
-      this.listSelectedMediaGroup.push(node);
+      this.listSelected.push(node);
     } else if (isSomeChildSelected) {
       node.partialSelected = true;
     }
@@ -195,8 +194,8 @@ export class MediaListComponent {
     let isSomeChildSelected = false;
 
     if (node.children && node.children.length) {
-      isAllChildSelected = node.children.every((child) => this.listSelectedMediaGroup.includes(child));
-      isSomeChildSelected = node.children.some((child) => this.listSelectedMediaGroup.includes(child));
+      isAllChildSelected = node.children.every((child) => this.listSelected.includes(child));
+      isSomeChildSelected = node.children.some((child) => this.listSelected.includes(child));
     }
 
     return {
@@ -205,7 +204,10 @@ export class MediaListComponent {
     };
   }
 
-  openEditModal(media: Media) {
+  openEditModal(media: Media, isTier: boolean) {
+    console.log(`selected list length : ${this.listSelected.length}`)
+    this.isTier = isTier;
+    this.listSelected = [];
     this.selectedMedia = media;
 
     this.resetForm();
@@ -224,8 +226,11 @@ export class MediaListComponent {
                 label: v.media_name,
                 data: v.media_id,
               };
+              console.log(`media name : ${v.media_name} -> tier ${v.tier} -> ${v.tier == 1}`)
+              if ((isTier && v.tier === 1) || (!isTier && v.chosen)) {
 
-              if (v.chosen) this.listSelectedMediaGroup.push(child);
+                this.listSelected.push(child);
+              }
               return child;
             }),
           };

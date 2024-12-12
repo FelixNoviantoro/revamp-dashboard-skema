@@ -23,6 +23,7 @@ export interface MediaList {
   chosen: boolean;
   media_id: number;
   media_name: string;
+  tier: number;
 }
 
 export interface MediaListUpdate {
