@@ -288,15 +288,20 @@ export class TopIssueComponent {
     const columns = await lastValueFrom(this.preferenceService.getColumns());
     const categories = await lastValueFrom(this.preferenceService.getCategories()); // prettier-ignore
 
+    const { category_set } = this.filterService.filter;
+
     this.columnsOptions = columns?.data.map((col) => ({
       label: col.name,
       value: col.name,
     }));
 
-    this.categoriesOptions = this.selectedCategories = categories?.results.map((category) => ({
+    this.categoriesOptions = categories?.results.map((category) => ({
       label: category.descriptionz,
       value: category.category_set,
     }));
+
+    this.selectedCategories = this.categoriesOptions.filter(v => v.value == category_set);
+
     this.downloadExcelConfirmModalOpen = true;
   };
 
