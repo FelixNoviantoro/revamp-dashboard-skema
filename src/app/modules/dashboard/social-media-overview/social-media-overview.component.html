@@ -45,13 +45,13 @@
                 style="object-fit: cover"
                 imgFallback="https://placehold.co/600x400?text=No+Image+Available" />
 
-              <div class="flex flex-column justify-content-between w-full h-full">
+              <div class="flex flex-column justify-content-between w-full h-full min-w-0">
                 <div class="flex flex-column">
                   <div class="text-sm font-semibold white-space-nowrap text-overflow-ellipsis overflow-hidden">
                     {{ item.title }}
                   </div>
                   <p class="white-space-nowrap overflow-hidden text-overflow-ellipsis p-0 mt-2">
-                    {{ item.content }}
+                    {{ item.textOriginal }}
                   </p>
                   <div class="flex gap-3 align-items-center justify-content-between">
                     <div class="flex align-items-center gap-2 cursor-pointer" (click)="onClickChartDetails(item)">
