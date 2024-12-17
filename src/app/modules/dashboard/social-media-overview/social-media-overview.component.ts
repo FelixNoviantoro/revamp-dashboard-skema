@@ -166,6 +166,7 @@ export class SocialMediaOverviewComponent implements OnInit, OnDestroy {
     const tone: string = data?.series?.name;
     const author: string = data?.drilldownToken?.filters?.filterAuthors?.values?.[0];
     const tag: string = data?.drilldownToken?.filters?.filterTags?.[0];
+    const filters = data?.series?.options?.drilldownToken?.filters;
 
     let start_date = this.filter.start_date;
     let end_date = this.filter.end_date;
@@ -196,6 +197,7 @@ export class SocialMediaOverviewComponent implements OnInit, OnDestroy {
         page: this.pagingInfo.page,
         size: this.pagingInfo.size,
         ...(data.drilldownToken?.filters?.keywords[0] && { keyword: data.drilldownToken.filters.keywords[0] }),
+        ...(type === 'number-of-mentions' && { keywords: filters.keywords[0], sources : filters.sources[0], start : filters.interval.start, end : filters.interval.end, periodType : filters.interval.periodType}),
         ...(['reach-by-platform', 'share-of-platform'].includes(type) && { platform: label }),
         ...(['mention-graph', 'tagcloud'].includes(type) && { tag }),
         ...(type === 'share-of-sentiment' && { tone: tone.toLowerCase() }),
