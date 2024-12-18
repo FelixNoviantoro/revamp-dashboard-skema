@@ -20,6 +20,7 @@ export class FileUploadComponent {
   @Input() form!: FormGroup;
 
   uploadedImageURL: SafeUrl | null = null;
+  uploadedImageURLs: SafeUrl[] = [];
   file: File | null = null;
 
   constructor(private sanitizer: DomSanitizer) {}
@@ -50,15 +51,23 @@ export class FileUploadComponent {
 
   onImagePicked(event: Event) {
     const file = (event.target as HTMLInputElement)?.files?.[0];
-    const objectURL = URL.createObjectURL(file!);
-    this.file = file ?? null;
-    this.uploadedImageURL = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-    this.form.patchValue({ image: file });
+    if (file) {
+      const objectURL = URL.createObjectURL(file);
+      const safeURL = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+      const currentImages = this.form.value.image || [];
+      this.form.patchValue({ image: [...currentImages, file] });
+      this.uploadedImageURLs.push(safeURL);
+    }
   }
 
-  removeImage() {
-    this.file = null;
-    this.uploadedImageURL = null;
-    this.form.patchValue({ image: null });
+  removeImage(index: number) {
+    const currentImages = [...this.form.value.image];
+    const currentURLs = [...this.uploadedImageURLs];
+  
+    currentImages.splice(index, 1);
+    currentURLs.splice(index, 1);
+  
+    this.form.patchValue({ image: currentImages });
+    this.uploadedImageURLs = currentURLs;
   }
 }

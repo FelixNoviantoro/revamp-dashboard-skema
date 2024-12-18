@@ -50,14 +50,14 @@ export class ShareComponent {
     content: new FormControl('', [Validators.required]),
     cc: new FormControl(''),
     media: new FormControl([]),
-    image: new FormControl<File | null>(null),
+    image: new FormControl<File[]>([]),
   });
   isSending: boolean = false;
 
   constructor(
     private shareService: ShareService,
     private messageService: MessageService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.fetchMedia();
@@ -74,11 +74,14 @@ export class ShareComponent {
   sendEmail = async () => {
     const { cc, content, editorDesk, headline, media, subline, image } = this.formGroup.controls;
 
-    let images: any;
-    if (image.value) {
-      const base64 = await this.file2Base64(image.value!);
-      const filename = image.value?.name ?? 'file.jpg';
-      images = [{ base64, filename }];
+    let images: any[] = [];
+
+    if (image.value && image.value.length > 0) {
+      for (const file of image.value) {
+        const base64 = await this.file2Base64(file);
+        const filename = file.name ?? 'file.jpg';
+        images.push({ base64, filename });
+      }
     }
 
     this.isSending = true;
