@@ -19,11 +19,11 @@ export class MapService {
   }
 
   getGeoJsonDataCities(): Observable<any> {
-    return this.http.get<any>('assets/kota-kabupaten.json');
+    return this.http.get<any>('assets/kota-kabupaten-2024.json');
   }
 
   getGeoJsonDataProv(): Observable<any> {
-    return this.http.get<any>('assets/indonesia-province.json');
+    return this.http.get<any>('assets/indonesia-provinsi-38.json');
   }
 
   getAllCount(filter: FilterRequestPayload): Observable<AllCount> {

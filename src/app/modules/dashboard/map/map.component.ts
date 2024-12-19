@@ -62,7 +62,7 @@ export class MapComponent {
   options: MapOptions = {
     layers: [
       tileLayer('', {
-        maxZoom: 8,
+        maxZoom: 15,
         minZoom: 5,
       }),
     ],
@@ -78,8 +78,8 @@ export class MapComponent {
     private ngZone: NgZone,
     private router: Router,
     private filterService: FilterService
-  ) {}
-  
+  ) { }
+
   ngOnInit(): void {
     this.isLoadingArticles = true;
     this.filter = this.filterService.subscribe(this.onFilterChange);
@@ -145,16 +145,63 @@ export class MapComponent {
   };
 
   addProvGeoJSONLayer(filter: any, data: ProvinceCount): void {
+
+    const provinceMapping: { [key: string]: string } = {
+      ACEH: "Aceh",
+      SUMUT: "Sumatera Utara",
+      SUMBAR: "Sumatera Barat",
+      RIAU: "Riau",
+      JAMBI: "Jambi",
+      SUMSEL: "Sumatera Selatan",
+      BENGKULU: "Bengkulu",
+      LAMPUNG: "Lampung",
+      BABEL: "Kepulauan Bangka Belitung",
+      KEPRI: "Kepulauan Riau",
+      "DKI JAKARTA": "DKI Jakarta",
+      JABAR: "Jawa Barat",
+      JATENG: "Jawa Tengah",
+      "DI. YOGYAKARTA": "DI Yogyakarta",
+      JATIM: "Jawa Timur",
+      BANTEN: "Banten",
+      BALI: "Bali",
+      NTB: "Nusa Tenggara Barat",
+      NTT: "Nusa Tenggara Timur",
+      KALBAR: "Kalimantan Barat",
+      KALTENG: "Kalimantan Tengah",
+      KALSEL: "Kalimantan Selatan",
+      KALTIM: "Kalimantan Timur",
+      KALTARA: "Kalimantan Utara",
+      SULUT: "Sulawesi Utara",
+      SULTENG: "Sulawesi Tengah",
+      SULSEL: "Sulawesi Selatan",
+      SULTRA: "Sulawesi Tenggara",
+      GORONTALO: "Gorontalo",
+      SULBAR: "Sulawesi Barat",
+      MALUKU: "Maluku",
+      MALUT: "Maluku Utara",
+      PAPUA: "Papua",
+      "PAPUA BARAT": "Papua Barat",
+      "PAPUA BARAT DAYA": "Papua Barat Daya",
+      "PAPUA SELATAN": "Papua Selatan",
+      "PAPUA TENGAH": "Papua Tengah",
+      "PAPUA PEGUNUNGAN": "Papua Pegunungan"
+    };
+
     const getDataByLocation = (featureName: string) => {
-      return data.data.find((prov) => prov.key.toUpperCase() === featureName?.toUpperCase());
+      const provinceKey = provinceMapping[featureName.toUpperCase()];
+      if (!provinceKey) {
+        console.warn(`Province ${featureName} not found in the mapping.`);
+        return null;
+      }
+
+      return data.data.find((prov) => prov.key.toUpperCase() === provinceKey.toUpperCase());
     };
 
     this.mapService.getGeoJsonDataProv().subscribe((data) => {
       if (!this.map) return;
       this.geoJsonLayer = geoJSON(data, {
         onEachFeature: (feature, layer) => {
-          console.log(`feature name : ${JSON.stringify(feature.properties)}`)
-          const featureName = feature.properties.Propinsi.toUpperCase();
+          const featureName = feature.properties.WADMPR.toUpperCase();
           const tooltipContent = `${featureName}: ${getDataByLocation(featureName)?.value ?? 0}`;
 
           layer.bindTooltip("<div style='font-size: 8px;'><b>" + featureName + "</b></div>", {
@@ -166,8 +213,8 @@ export class MapComponent {
 
           layer.on({
             click: (e) => {
-              const clickedFeatureName = e.target.feature.properties.Propinsi.toUpperCase();
-              this.removeProvinceLayer(clickedFeatureName); 
+              const clickedFeatureName = e.target.feature.properties.WADMPR.toUpperCase();
+              this.removeProvinceLayer(clickedFeatureName);
 
               const hoveredLayer = e.target;
               const featureData = getDataByLocation(clickedFeatureName);
@@ -194,7 +241,7 @@ export class MapComponent {
           });
         },
         style: (feature) => {
-          const featureName = feature?.properties.Propinsi.toUpperCase();
+          const featureName = feature?.properties.WADMPR.toUpperCase();
           const featureData = getDataByLocation(featureName);
 
           return {
@@ -216,38 +263,44 @@ export class MapComponent {
         location.key.toUpperCase() === featureName?.toUpperCase()
       );
     };
-  
+
     const provinceGroups = new Map<string, L.LayerGroup>();
-  
+
     this.mapService.getGeoJsonDataCities().subscribe({
       next: (geoJsonData) => {
         if (!this.map) return;
-  
+
         this.geoJsonLayer = geoJSON(geoJsonData, {
           onEachFeature: (feature, layer) => {
-            const provinceName = feature.properties.NAME_1.toUpperCase();
-            const cityName = feature.properties.NAME_2;
-            const type = feature.properties.TYPE_2;
-  
+            const provinceName = feature.properties.WADMPR.toUpperCase();
+            let cityName = feature.properties.WADMKK;
+
+            if (!cityName.startsWith('Kota')) {
+              cityName = 'Kabupaten ' + cityName;
+            }
+
+            // const type = feature.properties.TYPE_2;
+
             if (!provinceGroups.has(provinceName)) {
               provinceGroups.set(provinceName, L.layerGroup());
             }
-  
+
             const provinceGroup = provinceGroups.get(provinceName);
             provinceGroup?.addLayer(layer);
-  
-            const tooltipContent = `${cityName}: ${getDataByLocation(`${type} ${cityName}`)?.value ?? 0}`;
+
+            const tooltipContent = `${cityName}: ${getDataByLocation(cityName)?.value ?? 0}`;
+
             layer.bindTooltip("<div style='font-size: 8px;'><b>" + tooltipContent + "</b></div>", {
               permanent: true,
               direction: "center",
               className: "tooltip",
             });
-  
+
             this.citiesLayers.set(cityName, layer);
-  
+
             layer.on({
               click: (e) => {
-                const clickedFeatureName = e.target.feature.properties.NAME_2;
+                const clickedFeatureName = e.target.feature.properties.WADMKK;
                 this.map?.fitBounds(e.target.getBounds());
                 this.removeProvinceLayer(clickedFeatureName);
                 this.fetchArticlesByGeo(filter, clickedFeatureName);
@@ -258,8 +311,8 @@ export class MapComponent {
               },
               mouseout: (e) => {
                 const hoveredLayer = e.target;
-                const featureData = getDataByLocation(`${type} ${cityName}`);
-  
+                const featureData = getDataByLocation(cityName);
+
                 hoveredLayer.setStyle({
                   fillColor: this.getMapColor(featureData?.value ?? 0),
                   fillOpacity: 1,
@@ -268,10 +321,12 @@ export class MapComponent {
             });
           },
           style: (feature) => {
-            const cityName = feature?.properties.NAME_2;
-            const type = feature?.properties.TYPE_2;
-            const featureData = getDataByLocation(`${type} ${cityName}`);
-  
+            let cityName = feature?.properties.WADMKK;
+            if (!cityName.startsWith('Kota')) {
+              cityName = 'Kabupaten ' + cityName;
+            }
+            const featureData = getDataByLocation(cityName);
+
             return {
               fillColor: this.getMapColor(featureData?.value ?? 0),
               fillOpacity: 1,
@@ -280,7 +335,7 @@ export class MapComponent {
             };
           },
         });
-  
+
         this.citiesLayersByProvince = provinceGroups;
       },
       error: (error) => {
@@ -292,7 +347,7 @@ export class MapComponent {
       },
     });
   }
-  
+
 
   getLevel(num: number, min: number, max: number) {
     if (num === 0) return 5;
@@ -344,7 +399,7 @@ export class MapComponent {
     this.fetchProvinceCount(filterState);
   };
 
-  removeProvinceLayer = (province: string): void  => {
+  removeProvinceLayer = (province: string): void => {
     const layer = this.provinceLayers.get(province);
     if (layer) {
       this.map?.removeLayer(layer);
@@ -355,16 +410,16 @@ export class MapComponent {
 
     console.log(`provinsi === ${province}`);
 
-    if(this.selectedLayerProv){
-        this.selectedGroupCities?.removeFrom(this.map!);
-        this.selectedLayerProv.addTo(this.map!);
+    if (this.selectedLayerProv) {
+      this.selectedGroupCities?.removeFrom(this.map!);
+      this.selectedLayerProv.addTo(this.map!);
     }
 
     const provinceLayer = this.provinceLayers.get(province); // Assuming `provinceLayers` stores province layers
     if (provinceLayer) {
       this.map?.removeLayer(provinceLayer);
     }
-  
+
     const cityLayerGroup = this.citiesLayersByProvince.get(province)
     if (cityLayerGroup) {
       cityLayerGroup.addTo(this.map!);
