@@ -402,7 +402,8 @@ export class NewsindexComponent {
     this.articleService
       .downloadSelectedExcel(
         {...this.filterService.filter},
-        this.selectedArticles
+        this.selectedArticles,
+        this.searchForm.get('query')?.value ?? ''
       )
       .subscribe(({ data }) => {
         window.open(data.file_url, '_blank')?.focus()

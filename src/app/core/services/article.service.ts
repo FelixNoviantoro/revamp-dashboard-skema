@@ -145,13 +145,34 @@ export class ArticleService {
     });
   }
 
-  downloadSelectedExcel(filter: FilterRequestPayload, articles: Article[]): Observable<any>{
-    const article_ids = articles.map(({ article_id }) => article_id);
+  downloadSelectedExcel(filter: FilterRequestPayload, articles: Article[], search: string): Observable<any>{
+    const article_ids = articles.map(({ article_id }) => article_id).join(',');
+    const sentiments = articles
+    .map(({ tone }) => {
+      switch (tone) {
+        case 1:
+          return 'positive';
+        case -1:
+          return 'negative';
+        case 0:
+          return 'neutral';
+        default:
+          return null;
+      }
+    })
+    .filter(Boolean)
+    .join(','); 
+
     const params = {
       start_date: filter.start_date ? `${filter.start_date} ${filter.start_time}` : '',
       end_date: filter.end_date ? `${filter.end_date} ${filter.end_time}` : '',
       download_type : "excel",
-      article_ids : article_ids
+      category_id: filter.category_id ?? '',
+      category_set: filter.category_set ?? '',
+      user_media_type_id: filter.user_media_type_id ?? '',
+      sentiments: sentiments,
+      article_ids : article_ids,
+      search: search ?? '',
     };
     return this.http.get<any>(`${this.baseUrl}/v3/user/editing/download`, { params });
   }
