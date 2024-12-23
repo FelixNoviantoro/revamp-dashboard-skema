@@ -24,6 +24,7 @@ export interface MediaList {
   media_id: number;
   media_name: string;
   tier: number;
+  is_dewan_pers: boolean;
 }
 
 export interface MediaListUpdate {

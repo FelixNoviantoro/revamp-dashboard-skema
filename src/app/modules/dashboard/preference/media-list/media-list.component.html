@@ -63,7 +63,8 @@
                   [text]="true"
                   size="small"
                   styleClass="p-2 border-1 border-200 bg-white"
-                  (onClick)="openEditModal(media, false)">
+                  title="Detail"
+                  (onClick)="openEditModal(media, 'detail')">
                   <icon-pencil class="fill-text-color"></icon-pencil>
                 </p-button>
                 <p-button
@@ -71,8 +72,18 @@
                   [text]="true"
                   size="small"
                   styleClass="p-2 border-1 border-200 bg-white"
-                  (onClick)="openEditModal(media, true)">
-                  <i class="pi pi-verified"></i>
+                  title="Media Prioritas"
+                  (onClick)="openEditModal(media, 'prioritas')">
+                  <i class="pi pi-verified text-color"></i>
+                </p-button> 
+                <p-button
+                  [outlined]="true"
+                  [text]="true"
+                  size="small"
+                  styleClass="p-2 border-1 border-200 bg-white"
+                  title="Dewan Pers"
+                  (onClick)="openEditModal(media, 'pers')">
+                  <i class="pi pi-briefcase text-color"></i>
                 </p-button>
                 <p-button
                   [outlined]="true"
@@ -136,7 +147,7 @@
   [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
   <ng-template pTemplate="header">
     <div class="inline-flex align-items-center justify-content-center gap-2">
-      <span class="font-bold text-md">{{ !isTier ? 'Detail Media' : 'Media Prioritas' }}</span>
+      <span class="font-bold text-md">{{ getTitle(type) }}</span>
     </div>
   </ng-template>
   <form [formGroup]="form" class="flex flex-column gap-4">
@@ -171,50 +182,6 @@
     <p-button (click)="updateMedia()" label="Save" pAutoFocus [autofocus]="true"></p-button>
   </ng-template>
 </p-dialog>
-
-<!-- <p-dialog
-  header="Header"
-  [(visible)]="showTierModal"
-  [modal]="true"
-  [style]="{ width: '50rem', height: 'auto' }"
-  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
-  <ng-template pTemplate="header">
-    <div class="inline-flex align-items-center justify-content-center gap-2">
-      <span class="font-bold text-md">Detail Media</span>
-    </div>
-  </ng-template>
-  <form [formGroup]="form" class="flex flex-column gap-4">
-    <div class="flex flex-column gap-2">
-      <label for="media" class="text-sm">Media Name</label>
-      <input pInputText formControlName="user_media_type_name_def" />
-    </div>
-  </form>
-
-  <div class="mt-4">
-    <p-treeSelect
-      class="w-full md:w-20rem"
-      containerStyleClass="w-full border-200"
-      placeholder="Select"
-      appendTo="body"
-      selectionMode="checkbox"
-      [options]="listMediaGroup"
-      [(ngModel)]="listSelectedTier"
-      [filter]="true"
-      filterPlaceholder="Search"
-      filterBy="label"
-      [filterInputAutoFocus]="true"
-      [metaKeySelection]="false"
-      [containerStyle]="{ backgroundColor: 'var(--bg-color)' }"
-      [virtualScroll]="true"
-      [virtualScrollItemSize]="46"
-      [virtualScrollOptions]="{ scrollHeight: '320px' }">
-    </p-treeSelect>
-  </div>
-  <ng-template pTemplate="footer">
-    <p-button (click)="showTierModal = false" label="Cancel" pAutoFocus [outlined]="true"></p-button>
-    <p-button (click)="updateMedia()" label="Save" pAutoFocus [autofocus]="true"></p-button>
-  </ng-template>
-</p-dialog> -->
 
 <p-dialog
   header="Header"

@@ -67,6 +67,7 @@ export class MediaListComponent {
 
   form!: FormGroup;
   isTier: boolean = false;
+  type: string = 'detail';
 
   constructor(
     private preferenceService: PreferenceService,
@@ -77,6 +78,19 @@ export class MediaListComponent {
   ngOnInit() {
     this.resetForm();
     this.fetchData();
+  }
+
+  getTitle(type: string): string {
+    switch (type) {
+      case 'detail':
+        return 'Detail Media';
+      case 'prioritas':
+        return 'Media Prioritas';
+      case 'pers':
+        return 'Dewan Pers';
+      default:
+        return 'default title';
+    }
   }
 
   fetchData = () => {
@@ -204,9 +218,9 @@ export class MediaListComponent {
     };
   }
 
-  openEditModal(media: Media, isTier: boolean) {
+  openEditModal(media: Media, type: string) {
     console.log(`selected list length : ${this.listSelected.length}`)
-    this.isTier = isTier;
+    this.type = type;
     this.listSelected = [];
     this.selectedMedia = media;
 
@@ -226,9 +240,7 @@ export class MediaListComponent {
                 label: v.media_name,
                 data: v.media_id,
               };
-              console.log(`media name : ${v.media_name} -> tier ${v.tier} -> ${v.tier == 1}`)
-              if ((isTier && v.tier === 1) || (!isTier && v.chosen)) {
-
+              if ((type == 'prioritas' && v.tier === 1) || (type == 'detail' && v.chosen) || (type == 'pers' && v.is_dewan_pers)) {
                 this.listSelected.push(child);
               }
               return child;
