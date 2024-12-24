@@ -89,7 +89,7 @@ export class MediaListComponent {
       case 'pers':
         return 'Dewan Pers';
       default:
-        return 'default title';
+        return '';
     }
   }
 

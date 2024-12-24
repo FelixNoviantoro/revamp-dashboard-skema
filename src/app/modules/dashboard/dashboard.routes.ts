@@ -19,6 +19,7 @@ import { SocialMediaIndexComponent } from './social-media-index/social-media-ind
 import { SocialMediaOverviewComponent } from './social-media-overview/social-media-overview.component';
 import { SpokespersonComponent } from './spokesperson/spokesperson.component';
 import { TopArticlesComponent } from './top-articles/top-articles.component';
+import { AdminComponent } from './admin/admin.component';
 
 interface ChildrenRoute extends Route {
   withFilter?: boolean;
@@ -153,6 +154,12 @@ export const DashboardRoutes: DashboardRoutesProps[] = [
         path: 'social-media-overview',
         title: 'Social Media Overview',
         component: SocialMediaOverviewComponent,
+        withFilter: true,
+      },
+      {
+        path: 'admin',
+        title: 'Admin',
+        component: AdminComponent,
         withFilter: true,
       },
     ],

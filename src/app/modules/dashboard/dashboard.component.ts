@@ -75,6 +75,7 @@ export class DashboardComponent implements OnInit {
     'articles': 'Article',
     'share': 'Share',
     'search': 'Search',
+    'admin': 'Admin',
   };
 
   constructor(private router: Router) {
@@ -139,6 +140,11 @@ export class DashboardComponent implements OnInit {
         label: 'Share',
         routerLink: 'share',
         icon: '../../../assets/icons/cable.svg',
+      },
+      {
+        label: 'Admin',
+        routerLink: 'admin',
+        icon: '../../../assets/icons/admin.svg',
       },
     ];
 
