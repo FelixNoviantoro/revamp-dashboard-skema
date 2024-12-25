@@ -1,34 +1,4 @@
-<section>
-    <p-tabView>
-      <p-tabPanel>
-        <ng-template pTemplate="header">
-          <div class="flex gap-2">
-            <i class="pi pi-users"></i>
-            <span class="text-xs text-color font-normal">User list</span>
-          </div>
-        </ng-template>
-        <ng-template pTemplate="content">
-          <app-user-list></app-user-list>
-        </ng-template>
-      </p-tabPanel>
-      <p-tabPanel>
-        <ng-template pTemplate="header">
-          <div class="flex gap-2">
-            <i class="pi pi-briefcase"></i>
-            <span class="text-xs text-color font-normal">Company List</span>
-          </div>
-        </ng-template>
-        <ng-template pTemplate="content">
-          <app-company-list></app-company-list>
-        </ng-template>
-      </p-tabPanel>
-    </p-tabView>
-  </section>
-  
-
-
-
-<!-- <div>
+<div>
     <div class="card">
         <p-table [value]="users" dataKey="id" [rows]="10" [totalRecords]="totalRecords" [showFirstLastIcon]="false"
             [loading]="isLoading" [tableStyle]="{ 'min-width': '50rem' }">
@@ -127,4 +97,4 @@
             </ng-template>
         </p-paginator>
     </div>
-</div> -->
+</div>
