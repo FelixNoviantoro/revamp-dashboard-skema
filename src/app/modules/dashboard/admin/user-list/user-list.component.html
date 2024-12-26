@@ -1,5 +1,15 @@
 <div>
     <div class="card">
+        <div class="flex justify-content-between align-items-center mb-3">
+            <p-button severity="secondary" [plain]="true" iconPos="left" styleClass="border-0"
+                [style]="{ backgroundColor: '#F1F4FA' }" (onClick)="fetchUserAcceeMenu() ;showAddModal = true">
+                <div class="flex gap-2 align-items-center">
+                    <i class="pi pi-plus text-primary"></i>
+                    <div class="text-sm" style="color: #464255 !important">Add User</div>
+                </div>
+            </p-button>
+        </div>
+
         <p-table [value]="users" dataKey="id" [rows]="10" [totalRecords]="totalRecords" [showFirstLastIcon]="false"
             [loading]="isLoading" [tableStyle]="{ 'min-width': '50rem' }">
             <ng-template pTemplate="header">
@@ -88,8 +98,8 @@
                 </tr>
             </ng-template>
         </p-table>
-        <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows" [totalRecords]="totalRecords" [templateLeft]="customLeftTemplate"
-            [showFirstLastIcon]="false">
+        <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows" [totalRecords]="totalRecords"
+            [templateLeft]="customLeftTemplate" [showFirstLastIcon]="false">
             <ng-template #customLeftTemplate let-state>
                 <span class="text-sm text-color">
                     Total user:
@@ -98,3 +108,78 @@
         </p-paginator>
     </div>
 </div>
+
+<p-dialog header="Header" [(visible)]="showAddModal" [modal]="true" [style]="{ width: '50rem' }"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
+    <ng-template pTemplate="header">
+        <div class="inline-flex align-items-center justify-content-center gap-2">
+            <span class="font-bold">Add User</span>
+        </div>
+    </ng-template>
+
+    <ng-container>
+        <form [formGroup]="addValues" class="flex flex-column gap-4">
+            <div class="flex flex-column gap-2">
+                <label class="font-semibold" for="selectedCompany">Company</label>
+                <p-dropdown formControlName="company" [options]="companies" styleClass="w-full" class="text-xs"
+                    optionLabel="company_name" optionValue="id" [filter]="true" filterBy="company_name"
+                    [showClear]="true" placeholder="Select a Company">
+                </p-dropdown>
+            </div>
+            <div class="flex flex-column gap-2">
+                <label class="font-semibold" for="email">Email</label>
+                <input pInputText formControlName="email" id="email" class="text-xs" />
+            </div>
+            <div class="grid">
+                <div class="col-6">
+                    <div class="flex flex-column gap-2">
+                        <label class="font-semibold" for="full_name">Name</label>
+                        <input pInputText formControlName="full_name" id="full_name" class="text-xs" />
+                    </div>
+
+                </div>
+                <div class="col-6">
+                    <div class="flex flex-column gap-2">
+                        <label class="font-semibold" for="username">Username</label>
+                        <input pInputText formControlName="username" id="username" class="text-xs" />
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="flex flex-column gap-2">
+                        <label class="font-semibold" for="level_menu">User Level</label>
+                        <p-dropdown formControlName="level_menu" [options]="userLevels" styleClass="w-full" class="text-xs"
+                            optionLabel="level_name" optionValue="id" [filter]="true" filterBy="level_name"
+                            [showClear]="true" placeholder="Select User level">
+                        </p-dropdown>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="flex flex-column gap-2">
+                        <label class="font-semibold" for="password">Password</label>
+                        <div class="flex align-items-center">
+                            <input [type]="showPassword ? 'text' : 'password'" pInputText formControlName="password"
+                                id="password" class="text-xs flex-1" />
+                            <button type="button" class="p-button p-button-text p-ml-2"
+                                (click)="togglePasswordVisibility()">
+                                <i class="pi" [ngClass]="showPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-column gap-2">
+                <label class="font-semibold" for="menu">Access Menu</label>
+                <p-multiSelect [options]="accessMenus" formControlName="menu" placeholder="Access Menu"
+                    styleClass="text-xs w-full">
+                </p-multiSelect>
+            </div>
+        </form>
+    </ng-container>
+
+    <ng-template pTemplate="footer">
+        <p-button (click)="showAddModal = false" label="Cancel" pAutoFocus [outlined]="true"
+            [loading]="isLoading"></p-button>
+        <p-button (onClick)="saveUser()" icon="pi pi-check" label="Save" pAutoFocus [loading]="isLoading"
+            [autofocus]="true"></p-button>
+    </ng-template>
+</p-dialog>

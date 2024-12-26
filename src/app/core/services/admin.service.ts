@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BASE_URL } from '../api';
 import { HttpClient } from '@angular/common/http';
-import { UserResponse, Users } from '../models/all-user.model';
-import { Observable } from 'rxjs';
+import { UserLevel, UserResponse, Users } from '../models/all-user.model';
+import { map, Observable } from 'rxjs';
 import { FilterRequestPayload } from '../models/request.model';
 import { CompanyResponse } from '../models/company.model';
 
@@ -37,5 +37,29 @@ export class AdminService {
         "max_size": filter.size ?? 10
       }
     );
+  }
+
+  fetchUserAccessMenu(): Observable<string[]> {
+    return this.http.get<{ data: string[] }>(`${this.baseUrl}/v1/admin/menu/list/`).pipe(
+      map((response: { data: string[]; }) => response.data)
+    );
+  }
+
+  fetchUserLevels(): Observable<UserLevel[]> {
+    return this.http.get<{ data: UserLevel[] }>(`${this.baseUrl}/v1/admin/level/list/`).pipe(
+      map((response: { data: UserLevel[]; }) => response.data)
+    );
+  }
+
+  saveUser(payload : {
+    company: number;
+    email: string;
+    full_name: string;
+    username: string;
+    level_menu: number;
+    password: string;
+    menu: string[];
+  }): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/v1/admin/user/create/`, payload);
   }
 }

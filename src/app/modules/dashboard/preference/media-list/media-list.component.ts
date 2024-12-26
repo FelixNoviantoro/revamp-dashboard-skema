@@ -219,7 +219,6 @@ export class MediaListComponent {
   }
 
   openEditModal(media: Media, type: string) {
-    console.log(`selected list length : ${this.listSelected.length}`)
     this.type = type;
     this.listSelected = [];
     this.selectedMedia = media;

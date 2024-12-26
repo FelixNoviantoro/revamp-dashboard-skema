@@ -10,3 +10,9 @@ export interface Users {
     data: Users[];
     total_user: number;
   }
+
+  export interface UserLevel {
+    id: number;
+    level_name: string;
+    level_desc: string;
+  }

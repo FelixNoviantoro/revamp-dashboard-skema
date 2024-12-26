@@ -54,7 +54,6 @@ const highlightKeywords = (content: string, keywords: string[]): string => {
     ButtonModule,
     TableModule,
     TagComponent,
-    ButtonSecondaryComponent,
     InputTextModule,
     TieredMenuModule,
     PaginatorModule,
