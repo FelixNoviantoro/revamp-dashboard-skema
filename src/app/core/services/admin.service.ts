@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BASE_URL } from '../api';
 import { HttpClient } from '@angular/common/http';
-import { UserLevel, UserResponse, Users } from '../models/all-user.model';
+import { DetailUser, UserLevel, UserResponse, Users } from '../models/all-user.model';
 import { map, Observable } from 'rxjs';
 import { FilterRequestPayload } from '../models/request.model';
 import { CompanyResponse } from '../models/company.model';
@@ -61,5 +61,24 @@ export class AdminService {
     menu: string[];
   }): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/v1/admin/user/create/`, payload);
+  }
+
+  detailUser(id: number): Observable<DetailUser> {
+    const payload = {
+      id: id,
+      types: 'user'
+    }
+
+    return this.http.post<{ data: DetailUser[] }>(`${this.baseUrl}/v1/admin/detail/`, payload).pipe(
+      map((response: { data: DetailUser[]; }) => response.data[0])
+    );
+  }
+
+  deleteUser(user: Users): Observable<any> {
+    const payload = {
+      id: user.id,
+      username: user.usrname
+    }
+    return this.http.post<any>(`${this.baseUrl}/v1/admin/user/delete/`, payload);
   }
 }

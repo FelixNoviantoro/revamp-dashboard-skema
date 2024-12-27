@@ -5,6 +5,16 @@ export interface Users {
     company: string;
     level: string;
   }
+
+  export interface DetailUser {
+    full_name: string;       
+    email: string;           
+    username: string;        
+    company: string;         
+    company_id: number;      
+    level: number;           
+    list_menu: string[];    
+  }
   
   export interface UserResponse {
     data: Users[];

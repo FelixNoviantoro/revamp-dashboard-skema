@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { IconPencilComponent } from '../../../../core/components/icons/pencil/pencil.component';
 import { ButtonModule } from 'primeng/button';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
@@ -12,7 +12,11 @@ import { DialogModule } from 'primeng/dialog';
 import { Company } from '../../../../core/models/company.model';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { Dropdown, DropdownModule } from 'primeng/dropdown';
+import { DropdownModule } from 'primeng/dropdown';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
 
 @Component({
   selector: 'app-user-list',
@@ -28,8 +32,12 @@ import { Dropdown, DropdownModule } from 'primeng/dropdown';
     ReactiveFormsModule,
     InputTextModule,
     MultiSelectModule,
-    DropdownModule
+    DropdownModule,
+    ConfirmDialogModule,
+    ToastModule,
+    ConfirmPopupModule
   ],
+  providers: [ConfirmationService, MessageService],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.scss'
 })
@@ -52,13 +60,13 @@ export class UserListComponent {
   userLevels: UserLevel[] = [];
 
   addValues = this.fb.group({
-    company: 0,
-    email: '',
-    full_name: '',
-    username: '',
-    level_menu: 0,
-    password: '',
-    menu: [],
+    company: [null as number | null],  
+    email: [''],
+    full_name: [''],
+    username: [''],
+    level_menu: [null as number | null], 
+    password: [''],
+    menu: [[] as string[]],
   });
 
   showPassword: boolean = false;
@@ -66,6 +74,8 @@ export class UserListComponent {
   constructor(
     private adminService: AdminService,
     private fb: FormBuilder,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService
   ) { }
 
   ngOnDestroy() {
@@ -74,7 +84,7 @@ export class UserListComponent {
 
   ngOnInit() {
     this.fetchData({ page: this.page, size: this.rows });
-    this.fetchCountryList();
+    this.fetchCompanyList();
     this.fetchUserLevels();
   }
 
@@ -87,7 +97,7 @@ export class UserListComponent {
     });
   }
 
-  fetchCountryList = () => {
+  fetchCompanyList = () => {
     this.adminService.fetchCompanyList({ page: 1, size: 100 }).subscribe((res) => {
       this.companies = res.data;
     });
@@ -95,14 +105,12 @@ export class UserListComponent {
 
   fetchUserAcceeMenu = () => {
     this.adminService.fetchUserAccessMenu().subscribe((res) => {
-      console.log(res);
       this.accessMenus = res;
     });
   }
 
-  fetchUserLevels = () => { 
+  fetchUserLevels = () => {
     this.adminService.fetchUserLevels().subscribe((res) => {
-      console.log(res);
       this.userLevels = res;
     });
   }
@@ -129,15 +137,53 @@ export class UserListComponent {
       password: string;
       menu: string[];
     };
-  
+
     this.adminService.saveUser(payload)
-    .subscribe((res) => {
-      this.addValues.reset();
-      this.showAddModal = false;
+      .subscribe((res) => {
+        this.addValues.reset();
+        this.showAddModal = false;
+        console.log(res);
+      })
+      .add(() => {
+        this.fetchData({ page: 0, size: 10 });
+      });
+  }
+
+  openEditModal = (user: Users) => {
+    this.adminService.detailUser(user.id).subscribe((res) => {
       console.log(res);
-    })
-    .add(() => {
+      console.log(res.company_id)
+      console.log(res.level)
+      this.addValues.patchValue({
+        company: res.company_id,
+        email: res.email,
+        full_name: res.full_name,
+        username: res.username,
+        level_menu: res.level,
+        password: '',
+        menu: res.list_menu ?? [],
+      });
+    });
+
+    this.showAddModal = true;
+  }
+
+  deleteUser = (event: Event, user: Users) => {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'Are you sure to delete this user?',
+      icon: 'pi pi-info-circle',
+      acceptButtonStyleClass: 'p-button-danger p-button-sm',
+      accept: () => {this.confirmDeleteUser(user)},
+    });
+  }
+
+  confirmDeleteUser = (user: Users) => {
+    this.adminService.deleteUser(user).subscribe((res) => {
+      console.log(res);
+    }).add(() => {
       this.fetchData({ page: 0, size: 10 });
     });
   }
+
 }
