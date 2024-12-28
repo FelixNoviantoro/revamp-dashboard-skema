@@ -200,7 +200,7 @@ export class UserListComponent {
   deleteUser = (event: Event, user: Users) => {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
-      message: 'Are you sure to delete this user?',
+      message: `Are you sure to delete user ${user.name} ?`,
       icon: 'pi pi-info-circle',
       acceptButtonStyleClass: 'p-button-danger p-button-sm',
       accept: () => { this.confirmDeleteUser(user) },
