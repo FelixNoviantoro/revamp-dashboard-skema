@@ -3,7 +3,7 @@
     <div class="card">
         <div class="flex justify-content-between align-items-center mb-3">
             <p-button severity="secondary" [plain]="true" iconPos="left" styleClass="border-0"
-                [style]="{ backgroundColor: '#F1F4FA' }" (onClick)="fetchUserAcceeMenu() ;showAddModal = true">
+                [style]="{ backgroundColor: '#F1F4FA' }" (onClick)="openAddModal()">
                 <div class="flex gap-2 align-items-center">
                     <i class="pi pi-plus text-primary"></i>
                     <div class="text-sm" style="color: #464255 !important">Add User</div>
@@ -115,7 +115,7 @@
     [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
     <ng-template pTemplate="header">
         <div class="inline-flex align-items-center justify-content-center gap-2">
-            <span class="font-bold">Add User</span>
+            <span class="font-bold">{{isAdding ? 'Add User' : 'Update User'}}</span>
         </div>
     </ng-template>
 
@@ -181,7 +181,7 @@
     <ng-template pTemplate="footer">
         <p-button (click)="showAddModal = false" label="Cancel" pAutoFocus [outlined]="true"
             [loading]="isLoading"></p-button>
-        <p-button (onClick)="saveUser()" icon="pi pi-check" label="Save" pAutoFocus [loading]="isLoading"
+        <p-button (onClick)=" isAdding ? saveUser() : updateUser()" icon="pi pi-check" [label]="isAdding ? 'Save' : 'Update'" pAutoFocus [loading]="isLoading"
             [autofocus]="true"></p-button>
     </ng-template>
 </p-dialog>

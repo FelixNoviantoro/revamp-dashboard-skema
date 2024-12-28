@@ -45,6 +45,7 @@ export class UserListComponent {
   filter: any;
 
   isLoading: boolean = false;
+  isAdding: boolean = false;
   showDeleteModal: boolean = false;
   showAddModal: boolean = false;
   showUpdateModal: boolean = false;
@@ -60,16 +61,18 @@ export class UserListComponent {
   userLevels: UserLevel[] = [];
 
   addValues = this.fb.group({
-    company: [null as number | null],  
+    company: [null as number | null],
     email: [''],
     full_name: [''],
     username: [''],
-    level_menu: [null as number | null], 
+    level_menu: [null as number | null],
     password: [''],
     menu: [[] as string[]],
   });
 
   showPassword: boolean = false;
+
+  tempId: number = 0;
 
   constructor(
     private adminService: AdminService,
@@ -86,6 +89,7 @@ export class UserListComponent {
     this.fetchData({ page: this.page, size: this.rows });
     this.fetchCompanyList();
     this.fetchUserLevels();
+    this.fetchUserAcceeMenu();
   }
 
   fetchData = (filter?: Partial<FilterRequestPayload>) => {
@@ -98,7 +102,7 @@ export class UserListComponent {
   }
 
   fetchCompanyList = () => {
-    this.adminService.fetchCompanyList({ page: 1, size: 100 }).subscribe((res) => {
+    this.adminService.fetchCompanyList({ page: 0, size: 1000 }).subscribe((res) => {
       this.companies = res.data;
     });
   }
@@ -123,8 +127,10 @@ export class UserListComponent {
     this.fetchData({ page: this.page, size: this.rows });
   };
 
-  togglePasswordVisibility(): void {
-    this.showPassword = !this.showPassword;
+  openAddModal = () => {
+    this.isAdding = true;
+    this.addValues.reset();
+    this.showAddModal = true;
   }
 
   saveUser = () => {
@@ -142,18 +148,41 @@ export class UserListComponent {
       .subscribe((res) => {
         this.addValues.reset();
         this.showAddModal = false;
-        console.log(res);
       })
       .add(() => {
-        this.fetchData({ page: 0, size: 10 });
+        this.refreshPage();
+      });
+  }
+
+  updateUser = () => {
+    const payload = {
+      ...this.addValues.value, 
+      id: this.tempId,            
+    } as {
+      id: number;
+      company: number;
+      email: string;
+      full_name: string;
+      username: string;
+      level_menu: number;
+      password: string;
+      menu: string[];
+    };
+
+    this.adminService.updateUser(payload)
+      .subscribe((res) => {
+        this.addValues.reset();
+        this.showAddModal = false;
+      })
+      .add(() => {
+        this.refreshPage();
       });
   }
 
   openEditModal = (user: Users) => {
+    this.isAdding = false;
+    this.tempId = user.id;
     this.adminService.detailUser(user.id).subscribe((res) => {
-      console.log(res);
-      console.log(res.company_id)
-      console.log(res.level)
       this.addValues.patchValue({
         company: res.company_id,
         email: res.email,
@@ -174,7 +203,7 @@ export class UserListComponent {
       message: 'Are you sure to delete this user?',
       icon: 'pi pi-info-circle',
       acceptButtonStyleClass: 'p-button-danger p-button-sm',
-      accept: () => {this.confirmDeleteUser(user)},
+      accept: () => { this.confirmDeleteUser(user) },
     });
   }
 
@@ -182,8 +211,19 @@ export class UserListComponent {
     this.adminService.deleteUser(user).subscribe((res) => {
       console.log(res);
     }).add(() => {
-      this.fetchData({ page: 0, size: 10 });
+      this.refreshPage();
     });
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  refreshPage = () => {
+    this.page = 0;
+    this.first = 0;
+    this.rows = 10;
+    this.fetchData({ page: this.page, size: this.rows });
   }
 
 }

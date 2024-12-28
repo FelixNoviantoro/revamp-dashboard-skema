@@ -74,6 +74,19 @@ export class AdminService {
     );
   }
 
+  updateUser(payload: {
+    id: number;
+    company: number;
+    email: string;
+    full_name: string;
+    username: string;
+    level_menu: number;
+    password: string;
+    menu: string[];
+  }): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/v1/admin/user/update/`, payload);
+  }
+
   deleteUser(user: Users): Observable<any> {
     const payload = {
       id: user.id,
