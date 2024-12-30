@@ -51,7 +51,7 @@ export class AdminService {
     );
   }
 
-  saveUser(payload : {
+  saveUser(payload: {
     company: number;
     email: string;
     full_name: string;
@@ -93,5 +93,19 @@ export class AdminService {
       username: user.usrname
     }
     return this.http.post<any>(`${this.baseUrl}/v1/admin/user/delete/`, payload);
+  }
+
+  saveCompany(payload: {
+    status: string;
+    name: string;
+    address: string;
+    phone: string;
+    contact: string;
+    expired: string;
+    email: string;
+    limit_keyword: string;
+    icon?: { base64: string; filename: string }[];
+  }): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/v1/admin/company/create/`, payload);
   }
 }
