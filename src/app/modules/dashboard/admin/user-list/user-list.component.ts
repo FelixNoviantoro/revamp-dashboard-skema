@@ -182,7 +182,7 @@ export class UserListComponent {
   openEditModal = (user: Users) => {
     this.isAdding = false;
     this.tempId = user.id;
-    this.adminService.detailUser(user.id).subscribe((res) => {
+    this.adminService.detailUserOrCompany(user.id, 'user').subscribe((res) => {
       this.addValues.patchValue({
         company: res.company_id,
         email: res.email,

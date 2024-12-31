@@ -63,14 +63,13 @@ export class AdminService {
     return this.http.post<any>(`${this.baseUrl}/v1/admin/user/create/`, payload);
   }
 
-  detailUser(id: number): Observable<DetailUser> {
+  detailUserOrCompany(id: number, type: string): Observable<any> {
     const payload = {
       id: id,
-      types: 'user'
+      types: type
     }
-
-    return this.http.post<{ data: DetailUser[] }>(`${this.baseUrl}/v1/admin/detail/`, payload).pipe(
-      map((response: { data: DetailUser[]; }) => response.data[0])
+    return this.http.post<{ data: any[] }>(`${this.baseUrl}/v1/admin/detail/`, payload).pipe(
+      map((response: { data: any[]; }) => response.data[0])
     );
   }
 
@@ -108,4 +107,27 @@ export class AdminService {
   }): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/v1/admin/company/create/`, payload);
   }
+
+  updateCompany(payload: {
+    id: number;
+    status: string;
+    name: string;
+    address: string;
+    phone: string;
+    contact: string;
+    expired: string;
+    email: string;
+    limit_keyword: string;
+    icon?: { base64: string; filename: string }[];
+  }): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/v1/admin/company/update/`, payload);
+  }
+
+  deleteCompany(id: number): Observable<any> {
+    const payload = {
+      id: id,
+    }
+    return this.http.post<any>(`${this.baseUrl}/v1/admin/company/delete/`, payload);
+  }
+
 }

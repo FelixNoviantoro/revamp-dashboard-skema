@@ -52,7 +52,12 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.authState.subscribe((state) => {
       this.isLoading = state.isLoading;
+
       if (state.user || getUserFromLocalStorage()) {
+        if (state.user?.menu.includes('admin')){
+          this.router.navigateByUrl('/dashboard/admin');
+          return;
+        } 
         this.router.navigateByUrl('/');
       }
 

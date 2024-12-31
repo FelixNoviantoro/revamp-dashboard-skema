@@ -78,6 +78,8 @@ export class DashboardComponent implements OnInit {
     'admin': 'Admin',
   };
 
+  isAdminMenuPresent: boolean = false;
+
   constructor(private router: Router) {
     this.router.events.subscribe(() => {
       let currentRoute = this.router.routerState.root;
@@ -152,6 +154,8 @@ export class DashboardComponent implements OnInit {
       return this.user?.menu?.map((m) => m.toLowerCase()).includes(navItem.routerLink);
     });
 
+    this.isAdminMenuPresent = this.navItems.some((item) => item.label!.toLowerCase() === 'admin') ?? false;
+
     this.profileItems = [
       {
         label: 'Logout',
@@ -167,6 +171,10 @@ export class DashboardComponent implements OnInit {
     this.router.events.subscribe((route) => {
       if (route instanceof NavigationEnd) this.updateBreadCrumbs();
     });
+  }
+
+  isAdminMenu(): boolean {
+    return this.navItems!.some(item => item.label?.toLowerCase() === 'admin') ?? false;
   }
 
   updateBreadCrumbs() {

@@ -6,6 +6,10 @@
     background-color: var(--bg-color);
   }
 
+  ::ng-deep .p-toolbar-group-center.full-width {
+    min-width: 100%;
+  }
+
   ::ng-deep .nav .p-tabmenu-nav {
     border: none;
     background-color: var(--bg-color);
@@ -43,6 +47,10 @@
     font-size: small;
     padding: 1rem 0;
     background-color: var(--bg-color);
+  }
+
+  .full-width {
+    min-width: 1000px;
   }
 
 }

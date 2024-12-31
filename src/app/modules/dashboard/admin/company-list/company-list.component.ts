@@ -62,6 +62,7 @@ export class CompanyListComponent {
   statuses: string[] = ['TRIAL', 'ACTIVE', 'INACTIVE'];
 
   addValues = this.fb.group({
+    id: [''],
     status: ['TRIAL'],
     name: [''],
     address: [''],
@@ -82,8 +83,7 @@ export class CompanyListComponent {
   constructor(
     private adminService: AdminService,
     private fb: FormBuilder,
-    private confirmationService: ConfirmationService,
-    private sanitizer: DomSanitizer
+    private confirmationService: ConfirmationService
   ) { }
 
   ngOnDestroy() {
@@ -176,33 +176,36 @@ export class CompanyListComponent {
   openEditModal = (user: Users) => {
     this.isAdding = false;
     this.tempId = user.id;
-    // this.adminService.detailUser(user.id).subscribe((res) => {
-    //   this.addValues.patchValue({
-    //     company: res.company_id,
-    //     email: res.email,
-    //     full_name: res.full_name,
-    //     username: res.username,
-    //     level_menu: res.level,
-    //     password: '',
-    //     menu: res.list_menu ?? [],
-    //   });
-    // });
+
+    this.adminService.detailUserOrCompany(user.id, 'company').subscribe((res) => {
+      this.addValues.patchValue({
+        id: res.comp_id,
+        status: res.status,
+        name: res.comp_name,
+        address: res.address,
+        phone: res.phone,
+        contact: res.contact,
+        expired: res.expired,
+        email: res.email,
+        limit_keyword: res.limit_keyword
+      });
+    });
 
     this.showAddModal = true;
   }
 
-  deleteUser = (event: Event, user: Users) => {
+  deleteCompany = (event: Event, company: Company) => {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
-      message: `Are you sure to delete user ${user.name} ?`,
+      message: `Are you sure to delete company ${company.company_name} ?`,
       icon: 'pi pi-info-circle',
       acceptButtonStyleClass: 'p-button-danger p-button-sm',
-      accept: () => { this.confirmDeleteUser(user) },
+      accept: () => { this.confirmDeleteCompany(company) },
     });
   }
 
-  confirmDeleteUser = (user: Users) => {
-    this.adminService.deleteUser(user).subscribe((res) => {
+  confirmDeleteCompany = (company: Company) => {
+    this.adminService.deleteCompany(company.id).subscribe((res) => {
       console.log(res);
     }).add(() => {
       this.refreshPage();

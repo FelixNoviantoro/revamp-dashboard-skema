@@ -6,7 +6,7 @@
       <img *ngIf="user?.comp_icon" [src]="'https://api.skema.co.id/media/' + user?.comp_icon" height="30" class="mr-2" />
     </ng-template>
     <ng-template pTemplate="center">
-      <p-tabMenu class="nav" [model]="navItems">
+      <p-tabMenu class="nav" [model]="navItems" [ngClass]="{'full-width': isAdminMenuPresent}">
         <ng-template pTemplate="item" let-item>
           <a [routerLink]="item.routerLink" class="p-menuitem-link flex justify-content-between align-items-center">
             <div class="flex align-items-center gap-2">
