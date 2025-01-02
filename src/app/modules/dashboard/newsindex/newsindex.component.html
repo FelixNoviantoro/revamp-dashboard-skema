@@ -39,7 +39,7 @@
               (click)="menu.toggle($event)"></p-button
             ><p-tieredMenu #menu [model]="listAction" [popup]="true"></p-tieredMenu>
           </div>
-          <div>
+          <div *ngIf="user?.usr_comp_level != 1">
             <p-confirmPopup></p-confirmPopup>
             <p-button
               icon="pi pi-trash"
