@@ -54,8 +54,8 @@ export class LoginComponent implements OnInit {
       this.isLoading = state.isLoading;
 
       if (state.user || getUserFromLocalStorage()) {
-        if (state.user?.menu.includes('admin')){
-          this.router.navigateByUrl('/dashboard/admin');
+        if (!state.user?.menu.includes('overview')){
+          this.router.navigateByUrl(`/dashboard/${state.user?.menu[0]}`);
           return;
         } 
         this.router.navigateByUrl('/');

@@ -156,8 +156,8 @@ export class UserListComponent {
 
   updateUser = () => {
     const payload = {
-      ...this.addValues.value, 
-      id: this.tempId,            
+      ...this.addValues.value,
+      id: this.tempId,
     } as {
       id: number;
       company: number;
@@ -170,13 +170,28 @@ export class UserListComponent {
     };
 
     this.adminService.updateUser(payload)
-      .subscribe((res) => {
-        this.addValues.reset();
-        this.showAddModal = false;
-      })
-      .add(() => {
+      .subscribe({
+        next: (res) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'User updated successfully!',
+          });
+          this.addValues.reset();
+          this.showAddModal = false;
+        },
+        error: (err) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to update the user.',
+          });
+          console.error(err);
+        },
+      }).add(() => {
         this.refreshPage();
       });
+
   }
 
   openEditModal = (user: Users) => {
@@ -208,12 +223,28 @@ export class UserListComponent {
   }
 
   confirmDeleteUser = (user: Users) => {
-    this.adminService.deleteUser(user).subscribe((res) => {
-      console.log(res);
+    this.adminService.deleteUser(user).subscribe({
+      next: (res) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'User deleted successfully!',
+        });
+        console.log(res);
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to delete the user.',
+        });
+        console.error(err);
+      },
     }).add(() => {
       this.refreshPage();
     });
-  }
+  };
+
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;

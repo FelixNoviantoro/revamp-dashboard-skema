@@ -1,4 +1,5 @@
 <div>
+    <p-toast></p-toast>
     <div class="card">
         <div class="flex justify-content-between align-items-center mb-3">
             <p-button severity="secondary" [plain]="true" iconPos="left" styleClass="border-0"
@@ -85,8 +86,9 @@
                     </td>
                     <td>
                         <div class="flex gap-2">
+                            <p-confirmPopup></p-confirmPopup>
                             <p-button [outlined]="true" [text]="true" size="small"
-                                styleClass="p-2 border-1 border-200 bg-white" title="Detail">
+                                styleClass="p-2 border-1 border-200 bg-white" title="Detail" (onClick)="openEditModal(company)">
                                 <icon-pencil class="fill-text-color"></icon-pencil>
                             </p-button>
                             <p-button [outlined]="true" [text]="true" size="small" (click)="deleteCompany($event ,company)"
@@ -113,7 +115,7 @@
     [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
     <ng-template pTemplate="header">
         <div class="inline-flex align-items-center justify-content-center gap-2">
-            <span class="font-bold">{{isAdding ? 'Add User' : 'Update User'}}</span>
+            <span class="font-bold">{{isAdding ? 'Add Company' : 'Update Company'}}</span>
         </div>
     </ng-template>
 
