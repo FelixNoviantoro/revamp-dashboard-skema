@@ -17,6 +17,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-user-list',
@@ -71,8 +72,11 @@ export class UserListComponent {
   });
 
   showPassword: boolean = false;
-
   tempId: number = 0;
+
+  searchForm = this.fb.group({
+    query: ''
+  });
 
   constructor(
     private adminService: AdminService,
@@ -86,15 +90,20 @@ export class UserListComponent {
   }
 
   ngOnInit() {
-    this.fetchData({ page: this.page, size: this.rows });
+    this.fetchData({ page: this.page, size: this.rows }, this.searchForm.get('query')?.value ?? '');
     this.fetchCompanyList();
     this.fetchUserLevels();
     this.fetchUserAcceeMenu();
+
+    this.searchForm.valueChanges.pipe(debounceTime(500), distinctUntilChanged()).subscribe((v) => {
+      console.log(`search ${v.query}`)
+      this.refreshPage(v.query ?? '');
+    });
   }
 
-  fetchData = (filter?: Partial<FilterRequestPayload>) => {
+  fetchData = (filter?: Partial<FilterRequestPayload>, search = '') => {
     this.isLoading = true;
-    this.adminService.fetchUserList({ ...filter }).subscribe((res) => {
+    this.adminService.fetchUserList({ ...filter }, search).subscribe((res) => {
       this.users = res.data;
       this.totalRecords = res.total_user;
       this.isLoading = false;
@@ -124,7 +133,7 @@ export class UserListComponent {
     if (e.page !== undefined && e.page !== null) this.page = e.page;
     if (e.rows !== undefined && e.rows !== null) this.rows = e.rows;
     if (e.first !== undefined && e.first !== null) this.first = e.first;
-    this.fetchData({ page: this.page, size: this.rows });
+    this.fetchData({ page: this.page, size: this.rows }, this.searchForm.get('query')?.value ?? '');
   };
 
   openAddModal = () => {
@@ -250,11 +259,11 @@ export class UserListComponent {
     this.showPassword = !this.showPassword;
   }
 
-  refreshPage = () => {
+  refreshPage = (search = '') => {
     this.page = 0;
     this.first = 0;
     this.rows = 10;
-    this.fetchData({ page: this.page, size: this.rows });
+    this.fetchData({ page: this.page, size: this.rows }, search);
   }
 
 }

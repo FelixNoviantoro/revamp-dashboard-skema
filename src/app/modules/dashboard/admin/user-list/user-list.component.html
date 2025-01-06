@@ -1,7 +1,11 @@
 <div>
     <p-toast></p-toast>
     <div class="card">
-        <div class="flex justify-content-between align-items-center mb-3">
+        <div class="flex justify-content-start align-items-center gap-3 mb-3">
+            <span class="p-input-icon-right">
+                <input type="text" pInputText placeholder="Search" class="p-inputtext-sm max-w-17rem" [formControl]="searchForm.controls['query']"/>
+                <i class="pi pi-search"></i>
+            </span>
             <p-button severity="secondary" [plain]="true" iconPos="left" styleClass="border-0"
                 [style]="{ backgroundColor: '#F1F4FA' }" (onClick)="openAddModal()">
                 <div class="flex gap-2 align-items-center">
@@ -18,7 +22,7 @@
                     <th class="w-6rem">
                         <div class="flex align-items-center gap-2">
                             <span>No</span>
-                            <i pSortableColumn="user_media_type_id" class="pi pi-angle-down"></i>
+                            <i pSortableColumn="user_mediaF_type_id" class="pi pi-angle-down"></i>
                         </div>
                     </th>
                     <th>
@@ -88,7 +92,8 @@
                         <div class="flex gap-2">
                             <p-confirmPopup></p-confirmPopup>
                             <p-button [outlined]="true" [text]="true" size="small"
-                                styleClass="p-2 border-1 border-200 bg-white" title="Detail" (onClick)="openEditModal(user)">
+                                styleClass="p-2 border-1 border-200 bg-white" title="Detail"
+                                (onClick)="openEditModal(user)">
                                 <icon-pencil class="fill-text-color"></icon-pencil>
                             </p-button>
                             <p-button [outlined]="true" [text]="true" size="small" (click)="deleteUser($event ,user)"
@@ -149,9 +154,9 @@
                 <div class="col-6">
                     <div class="flex flex-column gap-2">
                         <label class="font-semibold" for="level_menu">User Level</label>
-                        <p-dropdown formControlName="level_menu" [options]="userLevels" styleClass="w-full" class="text-xs"
-                            optionLabel="level_name" optionValue="id" [filter]="true" filterBy="level_name"
-                            [showClear]="true" placeholder="Select User level">
+                        <p-dropdown formControlName="level_menu" [options]="userLevels" styleClass="w-full"
+                            class="text-xs" optionLabel="level_name" optionValue="id" [filter]="true"
+                            filterBy="level_name" [showClear]="true" placeholder="Select User level">
                         </p-dropdown>
                     </div>
                 </div>
@@ -181,7 +186,7 @@
     <ng-template pTemplate="footer">
         <p-button (click)="showAddModal = false" label="Cancel" pAutoFocus [outlined]="true"
             [loading]="isLoading"></p-button>
-        <p-button (onClick)=" isAdding ? saveUser() : updateUser()" icon="pi pi-check" [label]="isAdding ? 'Save' : 'Update'" pAutoFocus [loading]="isLoading"
-            [autofocus]="true"></p-button>
+        <p-button (onClick)=" isAdding ? saveUser() : updateUser()" icon="pi pi-check"
+            [label]="isAdding ? 'Save' : 'Update'" pAutoFocus [loading]="isLoading" [autofocus]="true"></p-button>
     </ng-template>
 </p-dialog>

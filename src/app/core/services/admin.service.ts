@@ -14,7 +14,7 @@ export class AdminService {
   private baseUrl = BASE_URL;
   constructor(private http: HttpClient) { }
 
-  fetchUserList(filter: FilterRequestPayload): Observable<UserResponse> {
+  fetchUserList(filter: FilterRequestPayload, search = ''): Observable<UserResponse> {
     console.log(`filter page ${filter.page}`)
     return this.http.post<UserResponse>(`${this.baseUrl}/v1/admin/list/`,
       {
@@ -22,19 +22,21 @@ export class AdminService {
         "order_by": "company",
         "types": 'user',
         "page": filter.page ?? 0,
-        "max_size": filter.size ?? 10
+        "max_size": filter.size ?? 10,
+        "search": search
       }
     );
   }
 
-  fetchCompanyList(filter: FilterRequestPayload): Observable<CompanyResponse> {
+  fetchCompanyList(filter: FilterRequestPayload, search = ''): Observable<CompanyResponse> {
     return this.http.post<CompanyResponse>(`${this.baseUrl}/v1/admin/list/`,
       {
         "order": "ASC",
         "order_by": "company",
         "types": 'company',
         "page": filter.page ?? 0,
-        "max_size": filter.size ?? 10
+        "max_size": filter.size ?? 10,
+        "search": search
       }
     );
   }
