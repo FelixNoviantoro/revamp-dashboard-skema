@@ -18,6 +18,7 @@ interface MediaCountTiles {
   print: number;
   online: number;
   tv: number;
+  radio: number;
   total: number;
 }
 @Component({
@@ -39,6 +40,7 @@ export class OverviewTilesComponent {
     print: 0,
     total: 0,
     tv: 0,
+    radio: 0
   };
 
   constructor(
@@ -79,6 +81,7 @@ export class OverviewTilesComponent {
       if (media.label === 'Print') mediaCountTmp.print = media.total ?? 0;
       if (media.label === 'Online') mediaCountTmp.online = media.total ?? 0;
       if (media.label === 'TV') mediaCountTmp.tv = media.total ?? 0;
+      if (media.label === 'radio') mediaCountTmp.radio = media.total ?? 0;
     });
     mediaCountTmp.total = mediaCountTmp.print + mediaCountTmp.online + mediaCountTmp.tv;
 

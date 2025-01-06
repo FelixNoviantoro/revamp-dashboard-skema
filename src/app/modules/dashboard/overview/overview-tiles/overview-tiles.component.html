@@ -1,6 +1,6 @@
 <spinner [spinning]="isLoading">
-  <div class="grid">
-    <div class="col-12 xl:col-3 lg:col-6 md:col-6 sm:col-6">
+  <div class="grid" style="justify-content: space-between;">
+    <div class="col-12 xl:col-2 lg:col-2 md:col-2 sm:col-2">
       <app-tile
         title="Print"
         [content]="mediaCount.print"
@@ -10,7 +10,7 @@
         link="/dashboard/overview-articles"
         [queryParams]="{ type: 'print', index: 0 }"></app-tile>
     </div>
-    <div class="col-12 xl:col-3 lg:col-6 md:col-6 sm:col-6">
+    <div class="col-12 xl:col-2 lg:col-2 md:col-2 sm:col-2">
       <app-tile
         title="Online"
         [content]="mediaCount.online"
@@ -20,7 +20,7 @@
         link="/dashboard/overview-articles"
         [queryParams]="{ type: 'online', index: 1 }"></app-tile>
     </div>
-    <div class="col-12 xl:col-3 lg:col-6 md:col-6 sm:col-6">
+    <div class="col-12 xl:col-2 lg:col-2 md:col-2 sm:col-2">
       <app-tile
         title="TV"
         [content]="mediaCount.tv"
@@ -30,7 +30,17 @@
         link="/dashboard/overview-articles"
         [queryParams]="{ type: 'tv', index: 2 }"></app-tile>
     </div>
-    <div class="col-12 xl:col-3 lg:col-6 md:col-6 sm:col-6">
+    <div class="col-12 xl:col-2 lg:col-2 md:col-2 sm:col-2">
+      <app-tile
+        title="Radio"
+        [content]="mediaCount.radio"
+        icon="radio"
+        color="#c6b138"
+        bgColor="#F0F9DC"
+        link="/dashboard/overview-articles"
+        [queryParams]="{ type: 'radio', index: 3 }"></app-tile>
+    </div>
+    <div class="col-12 xl:col-2 lg:col-2 md:col-2 sm:col-2">
       <app-tile
         title="Total Article"
         [content]="mediaCount.total"

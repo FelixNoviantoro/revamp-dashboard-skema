@@ -1,21 +1,23 @@
-<p-card styleClass="relative shadow-none border-1 border-200" [style]="{ width: '260px', backgroundColor: 'var(--card-color)' }">
-  <div class="flex p-4">
-    <div class="flex gap-3">
+<p-card styleClass="relative shadow-none border-1 border-200" 
+        [style]="{ width: '208px', backgroundColor: 'var(--card-color)' }">
+  <div class="flex p-3">
+    <div class="flex gap-2">
       <div
         class="flex align-items-center justify-content-center border-round-md"
         [style]="{
-          width: '64px',
-          height: '64px',
+          width: '51px',
+          height: '51px',
           background: bgColor,
         }">
         <icon-globe *ngIf="icon === 'globe'" [fill]="color"></icon-globe>
         <icon-newspaper *ngIf="icon === 'newspaper'" [fill]="color"></icon-newspaper>
         <icon-screen *ngIf="icon === 'screen'" [fill]="color"></icon-screen>
         <icon-stack *ngIf="icon === 'stack'" [fill]="color"></icon-stack>
+        <icon-radio *ngIf="icon === 'radio'" [fill]="color"></icon-radio>
       </div>
       <div>
         <p class="m-0">{{ title }}</p>
-        <h2 class="m-0" style="font-size: 36px">{{ content }}</h2>
+        <h2 class="m-0" style="font-size: 28.8px">{{ content }}</h2>
       </div>
     </div>
   </div>

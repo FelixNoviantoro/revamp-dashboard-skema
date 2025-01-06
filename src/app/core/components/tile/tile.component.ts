@@ -7,6 +7,7 @@ import { IconScreenComponent } from '../icons/screen/screen.component';
 import { IconNewspaperComponent } from '../icons/newspaper/newspaper.component';
 import { IconStackComponent } from '../icons/stack/stack.component';
 import { RouterModule } from '@angular/router';
+import { IconRadioComponent } from '../icons/radio/radio.component';
 
 @Component({
   selector: 'app-tile',
@@ -19,6 +20,7 @@ import { RouterModule } from '@angular/router';
     IconScreenComponent,
     IconNewspaperComponent,
     IconStackComponent,
+    IconRadioComponent,
     RouterModule,
   ],
   templateUrl: './tile.component.html',
