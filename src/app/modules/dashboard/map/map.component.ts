@@ -207,6 +207,7 @@ export class MapComponent {
           layer.bindTooltip("<div style='font-size: 8px;'><b>" + featureName + "</b></div>", {
             permanent: true,
             direction: "center",
+            className: 'bg-color'
           });
 
           this.provinceLayers.set(featureName, layer);
@@ -293,7 +294,7 @@ export class MapComponent {
             layer.bindTooltip("<div style='font-size: 8px;'><b>" + tooltipContent + "</b></div>", {
               permanent: true,
               direction: "center",
-              className: "tooltip",
+              className: 'bg-color'
             });
 
             this.citiesLayers.set(cityName, layer);
