@@ -103,7 +103,7 @@ export class FilterComponent {
           name: category.category_id,
           value: category.category_id,
         }));
-        this.subCategoryOptions = [...subCategoryOptions];
+        this.subCategoryOptions = [DEFAULT_SUB_CATEGORY, ...subCategoryOptions];
       },
       () => {
         // on Error
