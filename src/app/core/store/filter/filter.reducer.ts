@@ -15,8 +15,8 @@ export interface FilterState {
 }
 
 export const initialState: FilterState = {
-  date_type: 'yesterday',
-  start_date: moment().subtract(1, 'days').format('YYYY-MM-DD'),
+  date_type: 'today',
+  start_date: moment().format('YYYY-MM-DD'),
   end_date: moment().format('YYYY-MM-DD'),
   start_time: '00:00:00',
   end_time: '23:59:59',

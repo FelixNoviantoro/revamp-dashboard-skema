@@ -57,6 +57,7 @@ export class FilterComponent {
 
   periodicOptions: Option[] = [
     { name: 'Yesterday', value: 'yesterday' },
+    { name: 'Today', value: 'today' },
     { name: 'Last Week', value: 'week' },
     { name: 'Last Month', value: 'month' },
     { name: 'Last Year', value: 'year' },
@@ -137,12 +138,10 @@ export class FilterComponent {
   };
 
   onSetFilter() {
-    console.log("=========================================")
-    console.log(`start time : ${moment(this.startTime).format("HH:mm:ss")} end time : ${this.endTime.getTime().toFixed()}`)
-
     const today = moment().format('YYYY-MM-DD');
     const dateRange: any = {
-      yesterday: [moment().subtract(1, 'days').format('YYYY-MM-DD'), today],
+      yesterday: [moment().subtract(1, 'days').format('YYYY-MM-DD'), moment().subtract(1, 'days').format('YYYY-MM-DD')],
+      today: [today, today],
       week: [moment().subtract(1, 'weeks').format('YYYY-MM-DD'), today],
       month: [moment().subtract(1, 'months').format('YYYY-MM-DD'), today],
       year: [moment().subtract(1, 'years').format('YYYY-MM-DD'), today],
@@ -150,8 +149,13 @@ export class FilterComponent {
     const defaultStartDate = dateRange[this.selectedPeriodic][0];
     const defaultEndDate = dateRange[this.selectedPeriodic][1];
 
-    const startDate = this.isCustom ? moment(this.startDate).format('YYYY-MM-DD') : defaultStartDate;
-    const endDate = this.isCustom ? moment(this.endDate).format('YYYY-MM-DD') : defaultEndDate;
+    const startDate = this.isCustom 
+      ? moment(this.startDate).startOf('day').format('YYYY-MM-DD') 
+      : moment(defaultStartDate).startOf('day').format('YYYY-MM-DD');
+
+    const endDate = this.isCustom 
+      ? moment(this.endDate).endOf('day').format('YYYY-MM-DD') 
+      : moment(defaultEndDate).endOf('day').format('YYYY-MM-DD');
 
     const filter: FilterState = {
       category_set: this.selectedCategory,
