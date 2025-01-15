@@ -263,4 +263,13 @@ export class MediaListComponent {
       user_media_type_name_def: ['', Validators.required],
     });
   }
+
+  onNodeSelect(event: any) {
+    console.log('Node selected:', event.node);
+    this.listSelected.push(event.node);
+  }
+  
+  onNodeUnselect(event: any) {
+    console.log('Node unselected:', event.node);
+  }
 }

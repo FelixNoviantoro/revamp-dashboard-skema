@@ -106,6 +106,7 @@ export class NewsindexComponent {
   sanitizedContent: SafeHtml | null = null;
   searchFieldOptions = [
     { label: 'Title', value: 'title' },
+    { label: 'Media Name', value: 'media_name' },
     { label: 'Content', value: 'content' },
   ];
   toneOptions = Object.keys(TONE_MAP).map((key) => ({
