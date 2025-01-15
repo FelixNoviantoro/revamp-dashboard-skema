@@ -46,12 +46,18 @@ export class ArticleService {
     });
   }
 
-  getUserEditing(filter: FilterRequestPayload): Observable<ArticleResponse> {
+  getUserEditing(
+    filter: FilterRequestPayload, 
+    order: string = 'asc', 
+    order_by: string = 'datee'
+  ): Observable<ArticleResponse> {
     return this.http.post<ArticleResponse>(`${this.baseUrl}/v1/user/editing/`, {
       ...filter,
       media_id: 0,
       maxSize: filter.size ?? 16,
       page: filter.page ?? 0,
+      order, 
+      order_by, 
     });
   }
 

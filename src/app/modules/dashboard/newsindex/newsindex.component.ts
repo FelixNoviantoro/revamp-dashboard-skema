@@ -3,7 +3,7 @@ import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
-import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
+import { ConfirmationService, MenuItem, MessageService, SortEvent } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ChipModule } from 'primeng/chip';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
@@ -153,6 +153,9 @@ export class NewsindexComponent {
     },
   ];
 
+  order: string = 'asc';
+  orderBy: string = 'datee';
+
   constructor(
     private articleService: ArticleService,
     private filterService: FilterService,
@@ -160,7 +163,7 @@ export class NewsindexComponent {
     private messageService: MessageService,
     private sanitizer: DomSanitizer,
     private fb: FormBuilder
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.filter = this.filterService.subscribe((filter) => {
@@ -174,7 +177,7 @@ export class NewsindexComponent {
     });
   }
 
-  fetchData = (filter?: Partial<FilterRequestPayload>) => {
+  fetchData = (filter?: Partial<FilterRequestPayload>, order?: string, order_by?: string) => {
     this.isLoading = true;
     if (this.columnFilter) {
       this.columnFilter.overlayVisible = false;
@@ -187,12 +190,28 @@ export class NewsindexComponent {
         term: this.searchForm.get('query')?.value ?? '',
         search_field: this.searchForm.get('field')?.value ?? '',
         sentiments: this.selectedTones.map((option: any) => option.label.toLowerCase()).join(','),
-      })
+      }, order, order_by)
       .subscribe((res) => {
         this.isLoading = false;
         this.articles = res.data;
         this.totalRecords = res.recordsTotal;
       });
+  };
+
+  customSort = (event: SortEvent) => {
+
+    console.log(`event field: ${event.field} event order: ${event.order}`);
+
+    // Prevent repeated sorting calls
+    if (this.orderBy === event.field && this.order === (event.order === 1 ? 'asc' : 'desc')) {
+      return;
+    }
+  
+    const order = event.order === 1 ? 'asc' : 'desc';
+    this.order = order;
+    this.orderBy = event.field ?? 'datee';
+  
+    this.fetchData({ ...this.filterService.filter, page: this.page, size: this.rows }, order, this.orderBy);
   };
 
   onSelectionChange(value = []) {
@@ -203,7 +222,7 @@ export class NewsindexComponent {
     this.page = event.page;
     this.rows = event.rows;
     this.first = event.first;
-    this.fetchData({ page: event.page, size: event.rows });
+    this.fetchData({ page: event.page, size: event.rows }, this.order, this.orderBy);
   };
 
   deleteArticle = (event: Event) => {
@@ -400,7 +419,7 @@ export class NewsindexComponent {
     this.isLoading = true;
     this.articleService
       .downloadSelectedExcel(
-        {...this.filterService.filter},
+        { ...this.filterService.filter },
         this.selectedArticles,
         this.searchForm.get('query')?.value ?? ''
       )
