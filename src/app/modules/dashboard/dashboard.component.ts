@@ -17,6 +17,11 @@ import { User } from '../../core/models/user.model';
 import { USER_KEY, getUserFromLocalStorage } from '../../shared/utils/AuthUtils';
 import { FilterComponent } from './components/filter/filter.component';
 import { ToggleDarkmodeComponent } from './components/toggle-darkmode/toggle-darkmode.component';
+import { AuthState } from '../../core/store/auth/auth.reducer';
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { AppState } from '../../core/store';
+import { selectAuthState } from '../../core/store/auth/auth.selectors';
 
 @Component({
   selector: 'app-dashboard',
@@ -79,8 +84,12 @@ export class DashboardComponent implements OnInit {
   };
 
   isAdminMenuPresent: boolean = false;
+  authState: Observable<AuthState>;
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private store: Store<AppState>,
+  ) {
     this.router.events.subscribe(() => {
       let currentRoute = this.router.routerState.root;
       while (currentRoute.firstChild) {
@@ -89,6 +98,7 @@ export class DashboardComponent implements OnInit {
 
       this.showFilter = !!(currentRoute.routeConfig as any).withFilter;
     });
+    this.authState = this.store.select(selectAuthState);
   }
 
   ngOnInit() {
@@ -190,5 +200,18 @@ export class DashboardComponent implements OnInit {
   get currentRoute(): string {
     const url = this.router.url.split('?')[0];
     return url.split('/').pop() ?? '';
+  }
+
+  goToHome() {
+    this.authState.subscribe((state) => {
+
+      if (state.user || getUserFromLocalStorage()) {
+        if (!state.user?.menu.includes('overview')) {
+          this.router.navigateByUrl(`/dashboard/${state.user?.menu[0]}`);
+          return;
+        }
+        this.router.navigateByUrl('/');
+      }
+    });
   }
 }
