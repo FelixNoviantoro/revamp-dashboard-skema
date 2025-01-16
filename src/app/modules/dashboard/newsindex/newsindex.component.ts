@@ -168,6 +168,8 @@ export class NewsindexComponent {
 
   ngOnInit() {
     this.filter = this.filterService.subscribe((filter) => {
+      this.page = 0;
+      this.first = 0;
       this.fetchData({ ...filter, page: this.page, size: this.rows });
     });
 
