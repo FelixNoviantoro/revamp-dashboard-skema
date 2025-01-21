@@ -83,7 +83,7 @@ export class OverviewTilesComponent {
       if (media.label === 'TV') mediaCountTmp.tv = media.total ?? 0;
       if (media.label === 'radio') mediaCountTmp.radio = media.total ?? 0;
     });
-    mediaCountTmp.total = mediaCountTmp.print + mediaCountTmp.online + mediaCountTmp.tv;
+    mediaCountTmp.total = mediaCountTmp.print + mediaCountTmp.online + mediaCountTmp.tv + mediaCountTmp.radio;
 
     this.mediaCount = mediaCountTmp;
   };
