@@ -239,7 +239,7 @@ export class MediaListComponent {
                 label: v.media_name,
                 data: v.media_id,
               };
-              if ((type == 'prioritas' && v.tier === 1) || (type == 'detail' && v.chosen) || (type == 'pers' && v.is_dewan_pers)) {
+              if ((type == 'prioritas' && v.tier === 1) || (type == 'detail' && v.chosen) || (type == 'pers' && v.is_dewan_pers) || (type == 'pers' && v.is_international)) {
                 this.listSelected.push(child);
               }
               return child;
