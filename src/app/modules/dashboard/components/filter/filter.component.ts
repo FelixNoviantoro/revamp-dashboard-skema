@@ -98,6 +98,7 @@ export class FilterComponent {
   };
 
   getSubCategoriesOptions = (category = this.selectedCategory) => {
+    this.selectedSubCategory = initialState.category_id;
     this.preferenceService.getSubCategories(category).subscribe(
       (response) => {
         const subCategoryOptions = response.results.map((category) => ({
