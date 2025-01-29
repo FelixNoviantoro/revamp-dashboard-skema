@@ -209,11 +209,11 @@ export class NewsindexComponent {
     if (this.orderBy === event.field && this.order === (event.order === 1 ? 'asc' : 'desc')) {
       return;
     }
-  
+
     const order = event.order === 1 ? 'asc' : 'desc';
     this.order = order;
     this.orderBy = event.field ?? 'datee';
-  
+
     this.fetchData({ ...this.filterService.filter, page: this.page, size: this.rows }, order, this.orderBy);
   };
 
@@ -371,7 +371,15 @@ export class NewsindexComponent {
 
     const keywordRes = await this.articleService.getKeywordsByArticleId(article.article_id).toPromise();
 
-    const hightligtedWords = highlightKeywords(article.content, keywordRes?.data ?? []);
+    const cleanedAndSplitData = keywordRes!.data.flatMap((item: string) => {
+      const cleaned = item.replace(/^""|""$/g, ""); 
+      return cleaned.split("\" \"").map((keyword) => keyword.replace(/\"/g, "").trim()); // Split and clean
+    });
+
+    const uniqueKeywords = Array.from(new Set(cleanedAndSplitData));
+    const finalKeyword = uniqueKeywords.map((keyword) => `"${keyword}"`);
+
+    const hightligtedWords = highlightKeywords(article.content, finalKeyword);
     this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(hightligtedWords);
 
     this.availableCategories = categoriesResp?.results ?? [];
