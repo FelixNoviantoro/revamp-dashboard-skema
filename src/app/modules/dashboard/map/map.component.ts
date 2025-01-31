@@ -204,7 +204,7 @@ export class MapComponent {
           const featureName = feature.properties.WADMPR.toUpperCase();
           const tooltipContent = `${featureName}: ${getDataByLocation(featureName)?.value ?? 0}`;
 
-          layer.bindTooltip("<div style='font-size: 8px;'><b>" + featureName + "</b></div>", {
+          layer.bindTooltip("<div style='font-size: 8px;'><b>" + `${tooltipContent}` + "</b></div>", {
             permanent: true,
             direction: "center",
             className: 'bg-color'
